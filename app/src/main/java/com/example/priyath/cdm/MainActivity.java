@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     public HashMap<String,String> dataRecieved = null;
     public ArrayList<HashMap<String,String>> dataRecievedList = null;
-    private String[] arraySpinner;
+    private String[] unitArray;
     private int mInterval = 1000;
     private Handler mHandler;
     private int a1=1048576,a2=1048576;
@@ -40,62 +40,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Spinner spinner1=(Spinner)findViewById(R.id.spinner);
-        Spinner spinner2=(Spinner)findViewById(R.id.spinner2);
 
-        this.arraySpinner = new String[] {
-                "MB", "KB", "GB"
+        unitArray = new String[]{
+                "B", "KB", "MB", "GB"
         };
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, arraySpinner);
-        assert spinner1 != null;
-        spinner1.setAdapter(adapter);
-        assert spinner2 != null;
-        spinner2.setAdapter(adapter);
 
 
         onDisplay();
         mHandler = new Handler();
         startRepeatingTask();
 
-        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (position == 1)
-                    a2 = 1024;
-                else if (position == 0)
-                    a2 = 1048576;
-                else if (position == 2)
-                    a2 = 1073741824;
-                onDisplay();
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-
-        });
-
-        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (position == 1)
-                    a1 = 1024;
-                else if (position == 0)
-                    a1 = 1048576;
-                else if (position == 2)
-                    a1 = 1073741824;
-                onDisplay();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-
-        });
         button = (Button)findViewById(R.id.button);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -191,32 +146,70 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    void onDisplay(){
+    void onDisplay() {
         long totalDataRecieved = TrafficStats.getTotalRxBytes();
         long mobileDataRecieved = TrafficStats.getMobileRxBytes();
         long wifiDataRecieved = totalDataRecieved - mobileDataRecieved;
-        double mobileData ;
+        double mobileData;
         double wifiData;
+        int i = 0 , j = 0;
 
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String wD = preferences.getString("WifiDataRecieved", "0");
-        String mD = preferences.getString("MobileDataRecieved","0");
+        String mD = preferences.getString("MobileDataRecieved", "0");
         mobileData = mobileDataRecieved - Long.parseLong(mD);
         wifiData = wifiDataRecieved - Long.parseLong(wD);
-        mobileData= (mobileData/a1);//*0.0009765625);
+
+        if(mobileData < 1024){
+            i=0;
+        } else if (mobileData > 1024) {
+            mobileData = mobileData / 1024;
+            i=1;
+        } else if (mobileData > (1024 * 1024)) {
+            mobileData = mobileData / (1024 * 1024);
+            i=2;
+        } else {
+            mobileData = mobileData / (1024 * 1024 * 1024);
+            i=3;
+        }
+
+        if(wifiData  < 1024 ){
+            j=0;
+        }else if(wifiData > 1024) {
+            wifiData = wifiData / 1024;
+            j=1;
+        }else if(wifiData > (1024 *1024) ) {
+            wifiData = wifiData / (1024 * 1024);
+            j=2;
+        }else if(wifiData > (1024*1024*1024)) {
+            wifiData = wifiData / (1024 * 1024 * 1024);
+            j=3;
+        }
+
+
+
+
+
+      mobileData= (mobileData/a1);//*0.0009765625);
         wifiData=  (wifiData/a2);
 
         wifiData = Math.round(wifiData * 100.0) / 100.0;
         mobileData=Math.round(mobileData * 100.0)/100.0;
-
         TextView mobileDataView = (TextView)findViewById(R.id.textView2);
         TextView wifiDataView = (TextView)findViewById(R.id.textView4);
+        TextView unit1 = (TextView)findViewById(R.id.unit1);
+        TextView unit2 = (TextView)findViewById(R.id.unit2);
         mobileDataView.setText(String.valueOf(mobileData));
         wifiDataView.setText(String.valueOf(wifiData));
+        unit1.setText(unitArray[i]);
+        unit2.setText(unitArray[j]);
+
 
 
 
     }
+
+
 }
 
