@@ -1,0 +1,14 @@
+<resources>>
+    <string name="app_name">CDM</string>
+    <string name="action_settings">Settings</string>
+    <string name="zero">0</string>
+    <string name="MobileDataDownloaded">Mobile Data Downloaded</string>
+    <string name="Details">Details</string>
+    <string-array name="UNIT">
+        <item> KB </item>
+        <item> MB </item>
+        <item> GB </item>
+    </string-array>
+    <string name="title_activity_detailas">Detailas</string>
+    <string name="title_activity_details">Details</string>
+</resources>
