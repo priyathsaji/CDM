@@ -45,13 +45,14 @@
                 android:id="@+id/days" />
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="50sp"
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
                 android:text= "0"
                 android:id="@+id/eDay"
                 android:layout_alignBottom="@+id/days"
+                android:layout_marginLeft="5sp"
                 android:layout_toEndOf="@+id/days" />
 
             <TextView
@@ -60,7 +61,7 @@
                 android:layout_below="@+id/days"
                 android:id="@+id/sDate"
                 android:text = "Not used"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="25sp"
                 android:layout_toLeftOf="@+id/to"
                 android:textSize="20dp"/>
             <TextView
@@ -71,7 +72,7 @@
                 android:textStyle = "italic"
                 android:layout_centerHorizontal="true"
                 android:id = "@+id/to"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:text="  to  "/>
 
             <TextView
@@ -80,7 +81,7 @@
                 android:layout_below="@+id/days"
                 android:id="@+id/eDate"
                 android:text = "Not used"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="25dp"
                 android:layout_toRightOf="@+id/to"
                 android:textSize="20dp"/>
 
@@ -91,17 +92,18 @@
                 android:id="@+id/limit"
                 android:textSize = "20dp"
                 android:layout_above="@+id/sDate"
-                android:layout_toEndOf="@+id/sDate" />
+                android:layout_toEndOf="@+id/DataUploaded" />
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="50sp"
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
                 android:id="@+id/eLimit"
                 android:text = "0"
-                android:layout_above="@+id/eDate"
-                android:layout_toEndOf="@+id/to" />
+                android:layout_alignTop="@+id/eDay"
+                android:layout_toEndOf="@+id/limit"
+                android:layout_marginLeft="5sp"/>
 
             <Spinner
                 android:layout_width="wrap_content"
@@ -109,7 +111,7 @@
                 android:id="@+id/unitSpinner"
                 android:layout_above="@+id/eDate"
                 android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@+id/eDate"
+                android:layout_toEndOf="@+id/eLimit"
                 android:layout_alignTop="@+id/eLimit" />
 
             <TextView

@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private String[] unitArray;
     private int mInterval = 1000;
     private Handler mHandler;
-    private int a1=1048576,a2=1048576;
     Button button;
+    private int a1 = 1, a2 = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         long wifiDataRecieved = totalDataRecieved - mobileDataRecieved;
         double mobileData;
         double wifiData;
-        int i = 0 , j = 0;
+        int k = 0 , j = 0;
 
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -170,29 +170,31 @@ public class MainActivity extends AppCompatActivity {
         wifiData = wifiDataRecieved - Long.parseLong(wD);
 
         if(mobileData < 1024){
-            i=0;
+            k=0;
+            a1 = 1;
+        } else if (mobileData > 1073741824){
+            a1 = 1073741824;
+            k=3;
+        } else if (mobileData > (1048576)) {
+            a1 =  1048576;
+            k=2;
         } else if (mobileData > 1024) {
-            mobileData = mobileData / 1024;
-            i=1;
-        } else if (mobileData > (1024 * 1024)) {
-            mobileData = mobileData / (1024 * 1024);
-            i=2;
-        } else {
-            mobileData = mobileData / (1024 * 1024 * 1024);
-            i=3;
+            a1 = 1024;
+            k=1;
         }
 
-        if(wifiData  < 1024 ){
-            j=0;
-        }else if(wifiData > 1024) {
-            wifiData = wifiData / 1024;
-            j=1;
-        }else if(wifiData > (1024 *1024) ) {
-            wifiData = wifiData / (1024 * 1024);
-            j=2;
-        }else if(wifiData > (1024*1024*1024)) {
-            wifiData = wifiData / (1024 * 1024 * 1024);
+        if(wifiData  < 1024 ) {
+            j = 0;
+            a2 = 1;
+        }else if(wifiData > (1073741824)) {
+            a2 = 1073741824;
             j=3;
+        }else if(wifiData > (1048576) ) {
+            a2 = 1048576;
+            j=2;
+        }else if(wifiData > 1024) {
+            a2 = 1024;
+            j = 1;
         }
 
 
@@ -208,9 +210,13 @@ public class MainActivity extends AppCompatActivity {
         TextView wifiDataView = (TextView)findViewById(R.id.textView4);
         TextView unit1 = (TextView)findViewById(R.id.unit1);
         TextView unit2 = (TextView)findViewById(R.id.unit2);
+        assert mobileDataView != null;
         mobileDataView.setText(String.valueOf(mobileData));
+        assert wifiDataView != null;
         wifiDataView.setText(String.valueOf(wifiData));
-        unit1.setText(unitArray[i]);
+        assert unit1 != null;
+        unit1.setText(unitArray[k]);
+        assert unit2 != null;
         unit2.setText(unitArray[j]);
 
 
