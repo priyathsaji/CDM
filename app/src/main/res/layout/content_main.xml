@@ -14,10 +14,197 @@
     tools:showIn="@layout/activity_main">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/cardView1"
+        android:id="@+id/cardView"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        card_view:cardCornerRadius="4dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text = "MOBILE DATA LIMITER"
+                android:textSize="30dp"
+                android:id="@+id/DataLimiter"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/DataLimiter"
+                android:layout_marginTop="30dp"
+                android:text= "Days"
+                android:textSize="20dp"
+                android:id="@+id/days" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:text= "0"
+                android:id="@+id/eDay"
+                android:layout_alignBottom="@+id/days"
+                android:layout_toEndOf="@+id/days" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/days"
+                android:id="@+id/sDate"
+                android:text = "Not used"
+                android:layout_marginTop="10dp"
+                android:layout_toLeftOf="@+id/to"
+                android:textSize="20dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/days"
+                android:textSize = "25dp"
+                android:textStyle = "italic"
+                android:layout_centerHorizontal="true"
+                android:id = "@+id/to"
+                android:layout_marginTop="10dp"
+                android:text="  to  "/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/days"
+                android:id="@+id/eDate"
+                android:text = "Not used"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/to"
+                android:textSize="20dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Limit"
+                android:id="@+id/limit"
+                android:textSize = "20dp"
+                android:layout_above="@+id/sDate"
+                android:layout_toEndOf="@+id/sDate" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/eLimit"
+                android:text = "0"
+                android:layout_above="@+id/eDate"
+                android:layout_toEndOf="@+id/to" />
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/unitSpinner"
+                android:layout_above="@+id/eDate"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/eDate"
+                android:layout_alignTop="@+id/eLimit" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/to"
+                android:layout_marginTop="20sp"
+                android:id = "@+id/Downloaded"
+                android:text = "Downloaded  :"
+                android:textSize = "20sp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Downloaded"
+                android:id = "@+id/Uploaded"
+                android:text = "Uploaded  :"
+                android:textSize = "20sp"
+                android:layout_marginTop = "5sp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/to"
+                android:layout_toRightOf="@+id/Downloaded"
+                android:text = "0 "
+                android:id = "@+id/DataDownload"
+                android:layout_marginTop="20sp"
+                android:textSize = "20sp"
+                android:layout_marginLeft="5sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/to"
+                android:id = "@+id/DownloadUnit"
+                android:layout_toRightOf="@id/DataDownload"
+                android:layout_marginTop="20sp"
+                android:textSize="20sp"
+                android:text= " "/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text= "0"
+                android:textSize="20sp"
+                android:id = "@+id/DataUploaded"
+                android:layout_below="@+id/Downloaded"
+                android:layout_marginTop="5sp"
+                android:layout_toRightOf="@id/Uploaded"
+                android:layout_marginLeft="5sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id = "@+id/UploadUnit"
+                android:layout_below="@id/Downloaded"
+                android:text = " "
+                android:layout_marginTop="5sp"
+                android:textSize = "20sp"
+                android:layout_toRightOf="@id/DataUploaded"
+                android:layout_marginLeft="5sp"/>
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text = "Custom counter"
+        android:layout_below="@+id/cardView"
+        android:textSize="25sp"
+        android:id = "@+id/customCounter"
+        android:layout_marginTop="15sp"
+        android:textStyle="bold"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="30sp"
+        android:text= "@string/Details"
+        android:layout_below="@+id/cardView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="15sp"
+        android:id = "@+id/details"
+        android:background="#3F51B5"
+        android:textColor="#f9f9fa"/>
+
+
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardView1"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_marginTop="70sp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cardView"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:foreground="?android:attr/selectableItemBackground"
         android:elevation="10dp"
@@ -59,7 +246,7 @@
             android:layout_alignEnd="@+id/textView"
             android:layout_toEndOf="@+id/textView2"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"/>
+            android:paddingRight="10dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -84,6 +271,7 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15sp"
         android:elevation="5dp"
 
         card_view:cardCornerRadius="4dp"

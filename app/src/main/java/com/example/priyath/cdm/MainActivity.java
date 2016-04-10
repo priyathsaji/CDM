@@ -46,6 +46,14 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,unitArray);
+
+        Spinner unitSpinner = (Spinner) findViewById(R.id.unitSpinner);
+
+        assert unitSpinner != null;
+        unitSpinner.setAdapter(adapter);
+
+
         onDisplay();
         mHandler = new Handler();
         startRepeatingTask();
