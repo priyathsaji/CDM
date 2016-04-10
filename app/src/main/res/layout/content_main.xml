@@ -54,6 +54,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:text= "0"
                 android:id="@+id/eDay"
                 android:selectAllOnFocus="true"
@@ -240,6 +242,14 @@
             android:textSize="25sp"
             android:id="@+id/textView"
             android:layout_toRightOf="@+id/image1"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:id = "@+id/mobile"
+            android:layout_height="30sp"
+            android:background="#3F51B5"
+            android:textColor="#f9f9fa"
+            android:text = "Refresh"
+            android:layout_alignParentEnd="true"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -338,6 +348,14 @@
             android:textSize="25dp"
             android:id="@+id/textView3"
             android:layout_toRightOf="@id/image2"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:id = "@+id/wifi"
+            android:layout_height="30sp"
+            android:background="#3F51B5"
+            android:textColor="#f9f9fa"
+            android:text = "Refresh"
+            android:layout_alignParentEnd="true"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
