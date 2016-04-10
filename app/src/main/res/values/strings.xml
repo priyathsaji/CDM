@@ -11,4 +11,13 @@
     </string-array>
     <string name="title_activity_detailas">Detailas</string>
     <string name="title_activity_details">Details</string>
+    <string name="mobile_data_limiter">MOBILE DATA LIMITER</string>
+    <string name="days">Days</string>
+    <string name="_0">0</string>
+    <string name="not_used">Not used</string>
+    <string name="to">to</string>
+    <string name="limit">Limit</string>
+    <string name="mb">MB</string>
+    <string name="downloaded">Downloaded :</string>
+    <string name="uploaded">Uploaded :</string>
 </resources>

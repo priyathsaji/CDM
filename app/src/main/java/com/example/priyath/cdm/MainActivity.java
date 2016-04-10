@@ -16,11 +16,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,15 +35,19 @@ public class MainActivity extends AppCompatActivity {
 
     public HashMap<String,String> dataRecieved = null;
     public ArrayList<HashMap<String,String>> dataRecievedList = null;
-    private String[] unitArray;
+    private String[] unitArray,spinnerArray;
     private int mInterval = 1000;
     private Handler mHandler;
     private WifiManager wifi;
     private Method method1;
     private Class cmClass;
     private  boolean mobileDataEnabled = false;
-    Button button,button1,button2;
+    Button button,button1,button2,button3;
     private int a1 = 1, a2 = 1;
+    private EditText days,limit;
+    private Spinner unitSpinner;
+    private TextView unitTview;
+    int pos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,24 +56,48 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        days = (EditText)findViewById(R.id.eDay);
+        limit = (EditText)findViewById(R.id.eLimit);
+
         unitArray = new String[]{
                 "B", "KB", "MB", "GB"
         };
 
+        spinnerArray = new String[]{
+                "MB", "GB"
+        };
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,unitArray);
 
-        Spinner unitSpinner = (Spinner) findViewById(R.id.unitSpinner);
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,spinnerArray);
+
+        unitSpinner = (Spinner) findViewById(R.id.unitSpinner);
 
         assert unitSpinner != null;
         unitSpinner.setAdapter(adapter);
 
+        unitTview = (TextView)findViewById(R.id.unit);
+
 
         onDisplayWifiData();
         onDisplayMobileData();
+        updateLimiter();
         mHandler = new Handler();
         startRepeatingTask();
 
+        unitSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                pos = position;
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         button = (Button)findViewById(R.id.details);
 
@@ -101,6 +132,55 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 updateWifiData();
                 onDisplayWifiData();
+            }
+        });
+
+
+        button3 = (Button)findViewById(R.id.change);
+
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nodays;
+                String limitData;
+                String unit = "MB";
+
+
+                nodays = days.getText().toString();
+                limitData = limit.getText().toString();
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                SharedPreferences.Editor editor = preferences.edit();
+
+                if(pos == 1)
+                    unit = "GB";
+
+
+                unitTview.setText(unit);
+                editor.putString("Days",nodays);
+                editor.putString("limit",limitData);
+                editor.putString("unit", unit);
+                editor.apply();
+
+                View view = getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+
+                days.setFocusableInTouchMode(false);
+                limit.setFocusableInTouchMode(false);
+                days.setFocusable(false);
+                limit.setFocusable(false);
+                unitTview.setVisibility(View.VISIBLE);
+                unitSpinner.setVisibility(View.INVISIBLE);
+                unitSpinner.setFocusable(false);
+                unitTview.setFocusableInTouchMode(true);
+                unitTview.setFocusable(true);
+
+
+                button3.setVisibility(View.INVISIBLE);
+
             }
         });
 
@@ -178,12 +258,48 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.setMobileDataLimiter){
+            button3.setVisibility(View.VISIBLE);
+
+            assert days != null;
+            days.setFocusable(true);
+            days.setFocusableInTouchMode(true);
+            limit.setFocusable(true);
+            limit.setFocusableInTouchMode(true);
+            unitTview.setVisibility(View.INVISIBLE);
+            unitSpinner.setVisibility(View.VISIBLE);
+            unitSpinner.setFocusable(true);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
 
 
+    public void updateLimiter(){
+        String nodays;
+        String limitData;
+        String unit;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        nodays = preferences.getString("Days","0");
+        limitData = preferences.getString("limit","0");
+        unit = preferences.getString("unit","MB");
+
+        days = (EditText)findViewById(R.id.eDay);
+        limit = (EditText)findViewById(R.id.eLimit);
+        unitTview .setText(unit);
+
+        days.setText(nodays);
+        limit.setText(limitData);
+
+
+
+
+
+
+
+    }
 
     public void updateMobileData(){
         long totalDataRecieved = TrafficStats.getTotalRxBytes();
