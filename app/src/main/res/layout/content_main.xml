@@ -33,6 +33,7 @@
                 android:layout_centerHorizontal="true"
                 android:text = "MOBILE DATA LIMITER"
                 android:textSize="30dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:id="@+id/DataLimiter"
                 android:textStyle="bold" />
             <TextView
@@ -183,6 +184,7 @@
         android:text = "Custom counter"
         android:layout_below="@+id/cardView"
         android:textSize="25sp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:id = "@+id/customCounter"
         android:layout_marginTop="15sp"
         android:textStyle="bold"
@@ -221,43 +223,77 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:id="@+id/relativeLayout">
+
+        <ImageView
+            android:layout_width="80sp"
+            android:layout_height="80sp"
+            android:src="@drawable/mobiledata"
+            android:id="@+id/image1"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/MobileDataDownloaded"
-            android:textSize="20dp"
+            android:text="Mobile Data"
+            android:textSize="25sp"
             android:id="@+id/textView"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            android:layout_toRightOf="@+id/image1"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id = "@+id/MDownloaded"
+            android:text= "Downloaded  : "
+            android:layout_toRightOf="@+id/image1"
+            android:layout_below="@id/textView"
+            android:textSize = "20sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize = "20sp"
             android:text="@string/zero"
             android:id="@+id/textView2"
             android:layout_below="@+id/textView"
-            android:layout_alignParentStart="true" />
-
+            android:layout_toRightOf="@+id/MDownloaded" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/unit1"
             android:layout_below="@+id/textView"
-            android:layout_alignEnd="@+id/textView"
-            android:layout_toEndOf="@+id/textView2"
+            android:layout_toRightOf="@id/textView2"
+            android:textSize = "20sp"
+            android:layout_marginLeft="5sp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp" />
-
-        <Button
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Details"
-            android:id="@+id/button"
-            android:layout_alignBottom="@+id/unit1"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/textView" />
+            android:layout_below="@id/MDownloaded"
+            android:layout_toRightOf="@id/image1"
+            android:text = "Uploaded  : "
+            android:id = "@+id/MUploaded"
+            android:textSize = "20sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/MDownloaded"
+            android:layout_toRightOf="@+id/MUploaded"
+            android:textSize = "20sp"
+            android:layout_marginLeft="5sp"
+            android:text = "0"
+            android:id="@+id/MUploadedData"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/unit3"
+            android:layout_below="@id/MDownloaded"
+            android:layout_toRightOf="@id/MUploadedData"
+            android:text=" "
+            android:textSize="20sp"
+            android:layout_marginLeft="5sp"
+
+            />
+
 
 
 
@@ -285,43 +321,75 @@
         android:layout_below="@+id/relativeLayout"
         android:layout_alignParentStart="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="WIFI Data Downloaded"
-            android:textSize="20dp"
-            android:id="@+id/textView3"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+        <ImageView
+            android:layout_width="80sp"
+            android:layout_height="80sp"
+            android:src="@drawable/wifidata"
+            android:id="@+id/image2"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="WIFI Data"
+            android:textSize="25dp"
+            android:id="@+id/textView3"
+            android:layout_toRightOf="@id/image2"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/WDownloaded"
+            android:text="Downloaded  : "
+            android:layout_toRightOf="@id/image2"
+            android:layout_below="@+id/textView3"
+            android:textSize = "20sp"
+            android:layout_marginLeft="5sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="0"
             android:id="@+id/textView4"
             android:layout_below="@+id/textView3"
-            android:layout_alignParentStart="true" />
+            android:layout_toRightOf="@id/WDownloaded"
+            android:textSize = "20sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/unit2"
             android:layout_below="@+id/textView3"
-            android:layout_alignEnd="@+id/textView3"
-            android:layout_toEndOf="@+id/textView4"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"/>
+            android:layout_toRightOf="@+id/textView4"
+            android:text="  "
+            android:textSize= "20sp"
+            android:layout_marginLeft="5sp"/>
 
-        <Button
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Details"
-            android:id="@+id/button2"
-            android:layout_alignParentEnd="true"
-            android:layout_alignBottom="@+id/unit2"
-            android:layout_alignParentTop="true" />
+            android:text = "Uploaded : "
+            android:id = "@+id/WUploaded"
+            android:textSize = "20sp"
+            android:layout_below="@id/WDownloaded"
+            android:layout_toRightOf="@id/image2"
+            android:layout_marginLeft="5sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/WDownloaded"
+            android:text = "0"
+            android:textSize = "20sp"
+            android:id = "@+id/WUploadedData"
+            android:layout_toRightOf="@id/WUploaded"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text = "  "
+            android:textSize = "20sp"
+            android:layout_below="@id/WDownloaded"
+            android:layout_toRightOf="@id/WUploadedData"
+            android:layout_marginLeft="5sp"/>
     </RelativeLayout>
 
     </android.support.v7.widget.CardView>

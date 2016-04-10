@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         startRepeatingTask();
 
 
-        button = (Button)findViewById(R.id.button);
+        button = (Button)findViewById(R.id.details);
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
