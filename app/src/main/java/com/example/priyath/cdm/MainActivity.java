@@ -3,14 +3,13 @@ package com.example.priyath.cdm;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.TrafficStats;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -23,30 +22,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.prefs.Preferences;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 
 public class MainActivity extends AppCompatActivity {
 
 
-    public HashMap<String,String> dataRecieved = null;
-    public ArrayList<HashMap<String,String>> dataRecievedList = null;
-    private String[] unitArray,spinnerArray;
-    private int mInterval = 1000;
+
+    private String[] unitArray;
     private Handler mHandler;
-    private WifiManager wifi;
-    private Method method1;
-    private Class cmClass;
     private  boolean mobileDataEnabled = false;
     Button button,button1,button2,button3;
     private int a1 = 1, a2 = 1;
     private EditText days,limit;
     private Spinner unitSpinner;
-    private TextView unitTview;
+    private TextView unitTview,sDate,eDate;
     int pos;
 
     @Override
@@ -63,14 +56,14 @@ public class MainActivity extends AppCompatActivity {
                 "B", "KB", "MB", "GB"
         };
 
-        spinnerArray = new String[]{
+        String[] spinnerArray = new String[]{
                 "MB", "GB"
         };
 
 
 
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,spinnerArray);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinnerArray);
 
         unitSpinner = (Spinner) findViewById(R.id.unitSpinner);
 
@@ -144,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 String nodays;
                 String limitData;
                 String unit = "MB";
-
+                String feDate;
 
                 nodays = days.getText().toString();
                 limitData = limit.getText().toString();
@@ -157,9 +150,26 @@ public class MainActivity extends AppCompatActivity {
 
 
                 unitTview.setText(unit);
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat df = new SimpleDateFormat("dd / MMM / yyyy");
+                String formattedDate = df.format(c.getTime());
+                sDate = (TextView)findViewById(R.id.sDate);
+                assert sDate != null;
+                sDate.setText(formattedDate);
+                eDate = (TextView)findViewById(R.id.eDate);
+
+                c.add(Calendar.DATE, Integer.parseInt(nodays));
+                SimpleDateFormat sdf = new SimpleDateFormat("dd / MMM /yyyy");
+                Date resultdate = new Date(c.getTimeInMillis());
+                feDate = sdf.format(resultdate);
+
+                eDate.setText(feDate);
+
                 editor.putString("Days",nodays);
                 editor.putString("limit",limitData);
                 editor.putString("unit", unit);
+                editor.putString("sDate",formattedDate);
+                editor.putString("eDate",feDate);
                 editor.apply();
 
                 View view = getCurrentFocus();
@@ -167,6 +177,10 @@ public class MainActivity extends AppCompatActivity {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
+
+
+
+
 
                 days.setFocusableInTouchMode(false);
                 limit.setFocusableInTouchMode(false);
@@ -195,20 +209,21 @@ public class MainActivity extends AppCompatActivity {
 
                 ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
                 try {
-                    cmClass = Class.forName(cm.getClass().getName());
-                    method1 = cmClass.getDeclaredMethod("getMobileDataEnabled");
+                    Class cmClass = Class.forName(cm.getClass().getName());
+                    Method method1 = cmClass.getDeclaredMethod("getMobileDataEnabled");
                     method1.setAccessible(true); // Make the method callable
                     // get the setting for "mobile data"
-                    mobileDataEnabled = (Boolean)method1.invoke(cm);
+                    mobileDataEnabled = (Boolean) method1.invoke(cm);
                 } catch (Exception e) {
                     // Some problem accessible private API
-                    // TODO do whatever error handling you want here
                 }
 
-                wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+                WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
-                if((!mobileDataEnabled) && (!wifi.isWifiEnabled()))
+                if((!mobileDataEnabled) && (!wifi.isWifiEnabled())) {
                     stopRepeatingTask();
+                    mHandler.removeCallbacks(mStatusChecker);
+                }
 
                 if(mobileDataEnabled)
                     onDisplayMobileData();
@@ -223,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
+                int mInterval = 1000;
                 mHandler.postDelayed(mStatusChecker, mInterval);
             }
         }
@@ -281,15 +297,25 @@ public class MainActivity extends AppCompatActivity {
         String nodays;
         String limitData;
         String unit;
+        String formattedsDate,formattedeDate;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         nodays = preferences.getString("Days","0");
         limitData = preferences.getString("limit","0");
         unit = preferences.getString("unit","MB");
+        formattedsDate = preferences.getString("sDate"," 7 / Jan / 2016");
+        formattedeDate = preferences.getString("eDate"," 7 / Jan / 2016");
 
         days = (EditText)findViewById(R.id.eDay);
         limit = (EditText)findViewById(R.id.eLimit);
-        unitTview .setText(unit);
 
+        sDate = (TextView)findViewById(R.id.sDate);
+        eDate = (TextView)findViewById(R.id.eDate);
+
+        assert eDate != null;
+        eDate.setText(formattedeDate);
+        assert sDate != null;
+        sDate.setText(formattedsDate);
+        unitTview .setText(unit);
         days.setText(nodays);
         limit.setText(limitData);
 
@@ -301,6 +327,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setContentView(R.layout.activity_main);
+        updateLimiter();
+    }
+
     public void updateMobileData(){
         long totalDataRecieved = TrafficStats.getTotalRxBytes();
         long mobileDataRecieved = TrafficStats.getMobileRxBytes();
@@ -308,6 +342,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("MobileDataRecieved",String.valueOf(mobileDataRecieved));
         editor.putString("TotalDataRecieved",String.valueOf(totalDataRecieved));
+        editor.apply();
 
     }
 
@@ -370,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
 
         assert unit1 != null;
         unit1.setText(unitArray[k]);
-        ;
+
 
 
 
