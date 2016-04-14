@@ -22,6 +22,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private int a1 = 1, a2 = 1;
     private EditText days,limit;
     private Spinner unitSpinner;
-    private TextView unitTview,sDate,eDate;
+    private TextView unitTview,sDate,eDate,dDownloaded,dUploaded;
     int pos;
 
     @Override
@@ -138,6 +141,15 @@ public class MainActivity extends AppCompatActivity {
                 String limitData;
                 String unit = "MB";
                 String feDate;
+                long downloaded;
+                long uploaded;
+
+
+                dDownloaded = (TextView)findViewById(R.id.DataDownload);
+                dUploaded = (TextView)findViewById(R.id.DataUploaded);
+
+                downloaded = TrafficStats.getMobileRxBytes();
+                uploaded = TrafficStats.getMobileTxBytes();
 
                 nodays = days.getText().toString();
                 limitData = limit.getText().toString();
@@ -170,6 +182,9 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("unit", unit);
                 editor.putString("sDate",formattedDate);
                 editor.putString("eDate",feDate);
+                editor.putLong("dataDownloaded",downloaded);
+                editor.putLong("dataUploaded",uploaded);
+
                 editor.apply();
 
                 View view = getCurrentFocus();
@@ -177,6 +192,12 @@ public class MainActivity extends AppCompatActivity {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
+
+
+
+                dDownloaded.setText("0.0");
+                dUploaded.setText("0.0");
+
 
 
 
@@ -298,6 +319,11 @@ public class MainActivity extends AppCompatActivity {
         String limitData;
         String unit;
         String formattedsDate,formattedeDate;
+
+        long datadownloaded =0,datauploaded = 0,k1,k2;
+        int a=0,b=0;
+        double downloaded,uploaded;
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         nodays = preferences.getString("Days","0");
         limitData = preferences.getString("limit","0");
@@ -310,6 +336,63 @@ public class MainActivity extends AppCompatActivity {
 
         sDate = (TextView)findViewById(R.id.sDate);
         eDate = (TextView)findViewById(R.id.eDate);
+
+        dDownloaded = (TextView)findViewById(R.id.DataDownload);
+        dUploaded = (TextView)findViewById(R.id.DataUploaded);
+
+        TextView dUnit = (TextView)findViewById(R.id.DownloadUnit);
+        TextView uUnit = (TextView)findViewById(R.id.UploadUnit);
+
+
+        datadownloaded = (TrafficStats.getMobileRxBytes()-preferences.getLong("dataDownloaded",0));
+
+            k1 = 1;
+            k2 = 1;
+
+
+            if(datadownloaded < 1024){
+                k1 = 1;
+                a=0;
+            } else if (datadownloaded > 1073741824){
+                k1 = 1073741824;
+                a=3;
+            } else if (datadownloaded > (1048576)) {
+                k1 =  1048576;
+                a=2;
+            } else if (datadownloaded > 1024) {
+                k1 = 1024;
+                a=1;
+            }
+
+        if(datauploaded < 1024){
+            k2 = 1;
+            b=0;
+        } else if (datauploaded > 1073741824){
+            k2 = 1073741824;
+            b=3;
+        } else if (datauploaded > (1048576)) {
+            k2 =  1048576;
+            b=2;
+        } else if (datauploaded > 1024) {
+            k2 = 1024;
+            b=1;
+        }
+
+        downloaded = datadownloaded / k1;
+        datauploaded = (TrafficStats.getMobileTxBytes()- preferences.getLong("dataUploaded",0));
+        uploaded = datauploaded / k2;
+
+        downloaded = Math.round((downloaded*100)/100);
+        uploaded = Math.round((uploaded*100)/100);
+
+
+        dDownloaded.setText(String.valueOf(downloaded));
+        dUploaded.setText(String.valueOf(uploaded));
+        assert dUnit != null;
+        dUnit.setText(unitArray[a]);
+        assert uUnit != null;
+        uUnit.setText(unitArray[b]);
+
 
         assert eDate != null;
         eDate.setText(formattedeDate);
@@ -326,6 +409,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
+
+
 
 
     @Override

@@ -70,7 +70,7 @@
                 android:id="@+id/sDate"
                 android:text = "@string/not_used"
                 android:layout_marginTop="25sp"
-                android:layout_marginRight="5sp"
+                android:layout_marginRight="8sp"
                 android:layout_toLeftOf="@+id/to"
                 android:textSize="15sp"/>
             <TextView
@@ -91,7 +91,7 @@
                 android:id="@+id/eDate"
                 android:text = "@string/not_used"
                 android:layout_marginTop="25sp"
-                android:layout_marginLeft="5sp"
+                android:layout_marginLeft="8sp"
                 android:layout_toRightOf="@+id/to"
                 android:textSize="15sp"/>
 
