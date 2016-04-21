@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-/**
+/*
  * Created by priyath on 2/4/16.
  */
 public class RVadapter extends RecyclerView.Adapter<RVadapter.DataUsage>{

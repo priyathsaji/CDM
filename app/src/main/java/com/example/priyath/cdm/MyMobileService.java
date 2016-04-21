@@ -36,14 +36,14 @@ public class MyMobileService extends Service {
         mobileD = TrafficStats.getMobileRxBytes();
         startRepeatingTask();
 
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "MobileData notification Enabled", Toast.LENGTH_LONG).show();
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "MobileData notification Disabled", Toast.LENGTH_LONG).show();
     }
 
 

@@ -2,9 +2,9 @@ package com.example.priyath.cdm;
 
 import android.graphics.drawable.Drawable;
 
-import java.util.Comparator;
 
-/**
+
+/*
  * Created by priyath on 2/4/16.
  */
 public class usage {

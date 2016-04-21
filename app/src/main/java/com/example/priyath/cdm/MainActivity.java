@@ -1,6 +1,9 @@
 package com.example.priyath.cdm;
 
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -11,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
@@ -22,6 +26,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private EditText days,limit;
     private Spinner unitSpinner;
     private TextView unitTview,sDate,eDate,dDownloaded,dUploaded;
+    private CardView cardView;
+    private boolean isLimiterSet;
+
+
     int pos;
 
     @Override
@@ -61,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
         };
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
+
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        isLimiterSet = preferences.getBoolean("isLimiterSet",false);
+
 
         unitSpinner = (Spinner) findViewById(R.id.unitSpinner);
 
@@ -126,89 +141,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
+
+
         button3 = (Button)findViewById(R.id.change);
 
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nodays;
-                String limitData;
-                String unit = "MB";
-                String feDate;
-                long downloaded;
-                long uploaded;
+                changedatalimiter();
+            }
+        });
 
+        cardView = (CardView)findViewById(R.id.cardView);
 
-                dDownloaded = (TextView)findViewById(R.id.DataDownload);
-                dUploaded = (TextView)findViewById(R.id.DataUploaded);
+        assert cardView != null;
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                downloaded = TrafficStats.getMobileRxBytes();
-                uploaded = TrafficStats.getMobileTxBytes();
+                limiterDialog();
 
-                nodays = days.getText().toString();
-                limitData = limit.getText().toString();
-
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                SharedPreferences.Editor editor = preferences.edit();
-
-                if(pos == 1)
-                    unit = "GB";
-
-
-                unitTview.setText(unit);
-                Calendar c = Calendar.getInstance();
-                SimpleDateFormat df = new SimpleDateFormat("dd / MMM / yyyy");
-                String formattedDate = df.format(c.getTime());
-                sDate = (TextView)findViewById(R.id.sDate);
-                assert sDate != null;
-                sDate.setText(formattedDate);
-                eDate = (TextView)findViewById(R.id.eDate);
-
-                c.add(Calendar.DATE, Integer.parseInt(nodays));
-                SimpleDateFormat sdf = new SimpleDateFormat("dd / MMM /yyyy");
-                Date resultdate = new Date(c.getTimeInMillis());
-                feDate = sdf.format(resultdate);
-
-                eDate.setText(feDate);
-
-                editor.putString("Days",nodays);
-                editor.putString("limit",limitData);
-                editor.putString("unit", unit);
-                editor.putString("sDate",formattedDate);
-                editor.putString("eDate",feDate);
-                editor.putLong("dataDownloaded",downloaded);
-                editor.putLong("dataUploaded",uploaded);
-
-                editor.apply();
-
-                View view = getCurrentFocus();
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-
-
-
-                dDownloaded.setText("0.0");
-                dUploaded.setText("0.0");
-
-
-
-
-
-
-                days.setFocusableInTouchMode(false);
-                limit.setFocusableInTouchMode(false);
-                days.setFocusable(false);
-                limit.setFocusable(false);
-                unitTview.setVisibility(View.VISIBLE);
-                unitSpinner.setVisibility(View.INVISIBLE);
-                unitSpinner.setFocusable(false);
-                unitTview.setFocusableInTouchMode(true);
-                unitTview.setFocusable(true);
-
-
-                button3.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -241,8 +194,12 @@ public class MainActivity extends AppCompatActivity {
                     mHandler.removeCallbacks(mStatusChecker);
                 }
 
-                if(mobileDataEnabled)
+                if(mobileDataEnabled) {
                     onDisplayMobileData();
+                    if(isLimiterSet){
+                        updateLimiter();
+                    }
+                }
 
                 if (wifi.isWifiEnabled()){
                     onDisplayWifiData();
@@ -266,6 +223,93 @@ public class MainActivity extends AppCompatActivity {
 
     void stopRepeatingTask() {
         mHandler.removeCallbacks(mStatusChecker);
+    }
+
+
+    void changedatalimiter(){
+        String nodays;
+        String limitData;
+        String unit = "MB";
+        String feDate;
+        long downloaded;
+        long uploaded;
+
+
+
+        dDownloaded = (TextView)findViewById(R.id.DataDownload);
+        dUploaded = (TextView)findViewById(R.id.DataUploaded);
+
+        downloaded = TrafficStats.getMobileRxBytes();
+        uploaded = TrafficStats.getMobileTxBytes();
+
+        nodays = days.getText().toString();
+        limitData = limit.getText().toString();
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        if(pos == 1)
+            unit = "GB";
+
+
+        unitTview.setText(unit);
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd / MMM / yyyy");
+        String formattedDate = df.format(c.getTime());
+        sDate = (TextView)findViewById(R.id.sDate);
+        assert sDate != null;
+        sDate.setText(formattedDate);
+        eDate = (TextView)findViewById(R.id.eDate);
+
+        c.add(Calendar.DATE, Integer.parseInt(nodays));
+        SimpleDateFormat sdf = new SimpleDateFormat("dd / MMM /yyyy");
+        Date resultdate = new Date(c.getTimeInMillis());
+        feDate = sdf.format(resultdate);
+
+        eDate.setText(feDate);
+
+        editor.putString("Days",nodays);
+        editor.putString("limit",limitData);
+        editor.putString("unit", unit);
+        editor.putString("sDate",formattedDate);
+        editor.putString("eDate",feDate);
+        editor.putLong("dataDownloaded",downloaded);
+        editor.putLong("dataUploaded",uploaded);
+        editor.putBoolean("isLimiterSet",true);
+
+        editor.apply();
+
+        View view = getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
+
+
+        dDownloaded.setText("0.0");
+        dUploaded.setText("0.0");
+
+
+
+
+
+
+        days.setFocusableInTouchMode(false);
+        limit.setFocusableInTouchMode(false);
+        days.setFocusable(false);
+        limit.setFocusable(false);
+        unitTview.setVisibility(View.VISIBLE);
+        unitSpinner.setVisibility(View.INVISIBLE);
+        unitSpinner.setFocusable(false);
+        unitTview.setFocusableInTouchMode(true);
+        unitTview.setFocusable(true);
+        cardView.setFocusable(true);
+        cardView.setClickable(true);
+
+
+        button3.setVisibility(View.INVISIBLE);
+
     }
 
 
@@ -293,20 +337,73 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.setMobileDataLimiter){
-            button3.setVisibility(View.VISIBLE);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-            assert days != null;
-            days.setFocusable(true);
-            days.setFocusableInTouchMode(true);
-            limit.setFocusable(true);
-            limit.setFocusableInTouchMode(true);
-            unitTview.setVisibility(View.INVISIBLE);
-            unitSpinner.setVisibility(View.VISIBLE);
-            unitSpinner.setFocusable(true);
+                    if (!isFinishing()){
+                        limiterDialog();
+                    }
+                }
+            });
+
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    void limiterDialog() {
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Alert")
+                .setMessage("Do you want to change the number of Days and Data Limit ?")
+                .setCancelable(false)
+                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        button3.setVisibility(View.VISIBLE);
+                        assert days != null;
+                        days.setFocusable(true);
+                        days.setFocusableInTouchMode(true);
+                        limit.setFocusable(true);
+                        limit.setFocusableInTouchMode(true);
+                        unitTview.setVisibility(View.INVISIBLE);
+                        unitSpinner.setVisibility(View.VISIBLE);
+                        unitSpinner.setFocusable(true);
+                        cardView.setFocusable(false);
+                        cardView.setClickable(false);
+                    }
+                })
+                .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .create().show();
+    }
+
+
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 
 

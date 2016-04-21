@@ -34,14 +34,14 @@ public class MyService extends Service {
         wifiD = TrafficStats.getTotalRxBytes()- TrafficStats.getMobileRxBytes();
         startRepeatingTask();
 
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Wifi Notification Enabled", Toast.LENGTH_LONG).show();
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Wifi Notification Disabled", Toast.LENGTH_LONG).show();
     }
 
 
@@ -152,7 +152,7 @@ public class MyService extends Service {
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.notify(0, notification);
             wifiS = wifiDataDownloaded;
-            // Adds the Intent that starts the Activity to the top of the stack
+
     }
 
 
