@@ -67,9 +67,9 @@ public class MyService extends Service {
         mStatusChecker.run();
     }
 
-    void stopRepeatingTask() {
+    /*void stopRepeatingTask() {
         mHandler.removeCallbacks(mStatusChecker);
-    }
+    }*/
 
     void checking(){
         WifiManager wifi = (WifiManager)getSystemService(WIFI_SERVICE);
@@ -143,6 +143,7 @@ public class MyService extends Service {
                     .setContentTitle("Wifi Details")
                     .setSmallIcon(R.drawable.wifidata)
                     .setOngoing(true)
+                    .setPriority(Notification.PRIORITY_MAX)
                     .setContentIntent(resultPendingIntent))
                     .addLine("Data Downloaded : " + wifiData + unitArray[a]  )
                     .addLine("Download Speed  : " + String.valueOf(wifiS/k2) + unitArray[b] + "/s")

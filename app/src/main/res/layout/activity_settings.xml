@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text = "@string/notifications"
-        android:textSize = "30sp"
+        android:textSize = "40sp"
         android:textStyle="bold"
         android:textColor="#000000"
         android:id ="@+id/notifications"
@@ -26,6 +26,7 @@
         android:id = "@+id/wifiTextView"
         android:layout_below="@+id/notifications"
         android:textSize="30sp"
+        android:layout_marginTop="20sp"
         />
 
     <Switch
@@ -35,7 +36,26 @@
         android:textSize = "18sp"
         android:id="@+id/wifiSwitch"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="15sp"
+        android:layout_marginTop="25sp"
         android:layout_below="@+id/notifications"
         />
-</RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text = "Mobile Data"
+        android:id = "@+id/mobileTextView"
+        android:layout_below="@+id/wifiTextView"
+        android:layout_marginTop="10sp"
+        android:textSize="30sp"
+        />
+    <Switch
+        android:layout_width="100sp"
+        android:layout_height="wrap_content"
+        android:text="@string/off"
+        android:textSize = "18sp"
+        android:id="@+id/mobileDataSwitch"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="25sp"
+        android:layout_below="@+id/wifiSwitch"
+        />
+    </RelativeLayout>

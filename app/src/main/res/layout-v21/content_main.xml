@@ -58,9 +58,10 @@
                 android:focusableInTouchMode="false"
                 android:text= "@string/_0"
                 android:id="@+id/eDay"
+                android:hint = "nDays"
                 android:selectAllOnFocus="true"
                 android:layout_alignBottom="@+id/days"
-                android:layout_marginLeft="5sp"
+                android:layout_marginStart="5sp"
                 android:layout_toEndOf="@+id/days" />
 
             <TextView
@@ -70,8 +71,8 @@
                 android:id="@+id/sDate"
                 android:text = "@string/not_used"
                 android:layout_marginTop="25sp"
-                android:layout_marginRight="8sp"
-                android:layout_toLeftOf="@+id/to"
+                android:layout_marginEnd="8sp"
+                android:layout_toStartOf="@+id/to"
                 android:textSize="15sp"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -91,8 +92,8 @@
                 android:id="@+id/eDate"
                 android:text = "@string/not_used"
                 android:layout_marginTop="25sp"
-                android:layout_marginLeft="8sp"
-                android:layout_toRightOf="@+id/to"
+                android:layout_marginStart="8sp"
+                android:layout_toEndOf="@+id/to"
                 android:textSize="15sp"/>
 
             <TextView
@@ -114,9 +115,10 @@
                 android:ems="10"
                 android:id="@+id/eLimit"
                 android:text = "@string/_0"
+                android:hint = "elimit"
                 android:layout_alignTop="@+id/eDay"
                 android:layout_toEndOf="@+id/limit"
-                android:layout_marginLeft="5sp"/>
+                android:layout_marginStart="5sp"/>
             <Spinner
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -161,18 +163,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/to"
-                android:layout_toRightOf="@+id/Downloaded"
+                android:layout_toEndOf="@+id/Downloaded"
                 android:text = "0 "
                 android:id = "@+id/DataDownload"
                 android:layout_marginTop="20sp"
                 android:textSize = "20sp"
-                android:layout_marginLeft="5sp" />
+                android:layout_marginStart="5sp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/to"
                 android:id = "@+id/DownloadUnit"
-                android:layout_toRightOf="@id/DataDownload"
+                android:layout_toEndOf="@id/DataDownload"
                 android:layout_marginTop="20sp"
                 android:textSize="20sp" />
             <TextView
@@ -183,8 +185,8 @@
                 android:id = "@+id/DataUploaded"
                 android:layout_below="@+id/Downloaded"
                 android:layout_marginTop="5sp"
-                android:layout_toRightOf="@id/Uploaded"
-                android:layout_marginLeft="5sp"/>
+                android:layout_toEndOf="@id/Uploaded"
+                android:layout_marginStart="5sp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -192,8 +194,8 @@
                 android:layout_below="@id/Downloaded"
                 android:layout_marginTop="5sp"
                 android:textSize = "20sp"
-                android:layout_toRightOf="@id/DataUploaded"
-                android:layout_marginLeft="5sp"/>
+                android:layout_toEndOf="@id/DataUploaded"
+                android:layout_marginStart="5sp"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="30sp"
@@ -258,7 +260,8 @@
             android:layout_width="80sp"
             android:layout_height="80sp"
             android:src="@drawable/mobiledata"
-            android:id="@+id/image1"/>
+            android:id="@+id/image1"
+            android:contentDescription="@string/mobileImage" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -266,7 +269,7 @@
             android:text="Mobile Data"
             android:textSize="25sp"
             android:id="@+id/textView"
-            android:layout_toRightOf="@+id/image1"/>
+            android:layout_toEndOf="@+id/image1"/>
         <Button
             android:layout_width="wrap_content"
             android:id = "@+id/mobile"
@@ -281,7 +284,7 @@
             android:layout_height="wrap_content"
             android:id = "@+id/MDownloaded"
             android:text= "Downloaded  : "
-            android:layout_toRightOf="@+id/image1"
+            android:layout_toEndOf="@+id/image1"
             android:layout_below="@id/textView"
             android:textSize = "20sp"/>
 
@@ -292,22 +295,22 @@
             android:text="@string/zero"
             android:id="@+id/textView2"
             android:layout_below="@+id/textView"
-            android:layout_toRightOf="@+id/MDownloaded" />
+            android:layout_toEndOf="@+id/MDownloaded" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/unit1"
             android:layout_below="@+id/textView"
-            android:layout_toRightOf="@id/textView2"
+            android:layout_toEndOf="@id/textView2"
             android:textSize = "20sp"
-            android:layout_marginLeft="5sp"
+            android:layout_marginStart="5sp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/MDownloaded"
-            android:layout_toRightOf="@id/image1"
+            android:layout_toEndOf="@id/image1"
             android:text = "Uploaded  : "
             android:id = "@+id/MUploaded"
             android:textSize = "20sp" />
@@ -315,9 +318,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/MDownloaded"
-            android:layout_toRightOf="@+id/MUploaded"
+            android:layout_toEndOf="@+id/MUploaded"
             android:textSize = "20sp"
-            android:layout_marginLeft="5sp"
+            android:layout_marginStart="5sp"
             android:text = "0"
             android:id="@+id/MUploadedData"/>
         <TextView
@@ -325,10 +328,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/unit3"
             android:layout_below="@id/MDownloaded"
-            android:layout_toRightOf="@id/MUploadedData"
+            android:layout_toEndOf="@id/MUploadedData"
             android:text=" "
             android:textSize="20sp"
-            android:layout_marginLeft="5sp"
+            android:layout_marginStart="5sp"
 
             />
 

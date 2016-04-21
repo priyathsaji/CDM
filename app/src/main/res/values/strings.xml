@@ -23,4 +23,7 @@
     <string name="notifications">Notifications</string>
     <string name="wifi">wifi</string>
     <string name="off">Off</string>
+    <string name="uploaded_">Uploaded :</string>
+    <string name="wifiImage">wifiDataImage</string>
+    <string name="mobileImage">mobileDataImage</string>
 </resources>

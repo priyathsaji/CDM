@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 "MB", "GB"
         };
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinnerArray);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
 
         unitSpinner = (Spinner) findViewById(R.id.unitSpinner);
 
@@ -223,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
             try {
 
                 ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
                 try {
                     Class cmClass = Class.forName(cm.getClass().getName());
                     Method method1 = cmClass.getDeclaredMethod("getMobileDataEnabled");
@@ -316,8 +317,8 @@ public class MainActivity extends AppCompatActivity {
         String unit;
         String formattedsDate,formattedeDate;
 
-        long datadownloaded =0,datauploaded = 0,k1,k2;
-        int a=0,b=0;
+        long datadownloaded,datauploaded,k1,k2;
+        int a,b;
         double downloaded,uploaded;
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
@@ -341,15 +342,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         datadownloaded = (TrafficStats.getMobileRxBytes()-preferences.getLong("dataDownloaded",0));
-
-            k1 = 1;
-            k2 = 1;
+        datauploaded = (TrafficStats.getMobileTxBytes()-preferences.getLong("dataUploaded",0));
 
 
-            if(datadownloaded < 1024){
-                k1 = 1;
-                a=0;
-            } else if (datadownloaded > 1073741824){
+
+
+            if (datadownloaded > 1073741824){
                 k1 = 1073741824;
                 a=3;
             } else if (datadownloaded > (1048576)) {
@@ -358,12 +356,13 @@ public class MainActivity extends AppCompatActivity {
             } else if (datadownloaded > 1024) {
                 k1 = 1024;
                 a=1;
+            }else{
+                k1 = 1;
+                a=0;
             }
 
-        if(datauploaded < 1024){
-            k2 = 1;
-            b=0;
-        } else if (datauploaded > 1073741824){
+
+        if (datauploaded > 1073741824){
             k2 = 1073741824;
             b=3;
         } else if (datauploaded > (1048576)) {
@@ -372,6 +371,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (datauploaded > 1024) {
             k2 = 1024;
             b=1;
+        } else{
+                k2 = 1;
+                b=0;
         }
 
         downloaded = datadownloaded / k1;
