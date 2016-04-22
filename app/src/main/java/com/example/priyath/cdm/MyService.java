@@ -143,10 +143,10 @@ public class MyService extends Service {
                     .setContentTitle("Wifi Details")
                     .setSmallIcon(R.drawable.wifidata)
                     .setOngoing(true)
+                    .setContentText("Data Downloaded : " + wifiData + unitArray[a] )
+                    .setSubText("Download Speed  : " + String.valueOf(wifiS/k2) + unitArray[b] + "/s")
                     .setPriority(Notification.PRIORITY_MAX)
                     .setContentIntent(resultPendingIntent))
-                    .addLine("Data Downloaded : " + wifiData + unitArray[a]  )
-                    .addLine("Download Speed  : " + String.valueOf(wifiS/k2) + unitArray[b] + "/s")
                     .build();
             notification.flags |= Notification.FLAG_AUTO_CANCEL;
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

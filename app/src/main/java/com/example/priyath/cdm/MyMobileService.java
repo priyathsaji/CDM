@@ -166,11 +166,11 @@ public class MyMobileService extends Service {
         Notification notification = new Notification.InboxStyle(new Notification.Builder(this)
                 .setContentTitle("Mobile Data Details")
                 .setSmallIcon(R.drawable.mobiledata)
+                .setContentText("Data Downloaded : " + mobileData + unitArray[a] )
+                .setSubText("Download Speed  : " + String.valueOf(mobileS/k2) + unitArray[b] + "/s")
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_MAX)
                 .setContentIntent(resultPendingIntent))
-                .addLine("Data Downloaded : " + mobileData + unitArray[a]  )
-                .addLine("Download Speed  : " + String.valueOf(mobileS/k2) + unitArray[b] + "/s")
                 .build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
