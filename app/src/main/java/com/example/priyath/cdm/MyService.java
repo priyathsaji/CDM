@@ -21,7 +21,7 @@ import android.widget.Toast;
 public class MyService extends Service {
     public String unitArray[];
     public Handler mHandler;
-    public static long wifiD,wifiS;
+    public long wifiD,wifiS;
     @Override
     public IBinder onBind(Intent arg0) {
         return null;

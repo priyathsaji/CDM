@@ -170,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
@@ -422,8 +423,8 @@ public class MainActivity extends AppCompatActivity {
         nodays = preferences.getString("Days","0");
         limitData = preferences.getString("limit","0");
         unit = preferences.getString("unit","MB");
-        formattedsDate = preferences.getString("sDate"," 7 / Jan / 2016");
-        formattedeDate = preferences.getString("eDate"," 7 / Jan / 2016");
+        formattedsDate = preferences.getString("sDate"," not used ");
+        formattedeDate = preferences.getString("eDate"," not used ");
 
         days = (EditText)findViewById(R.id.eDay);
         limit = (EditText)findViewById(R.id.eLimit);
@@ -474,7 +475,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         downloaded = datadownloaded / k1;
-        datauploaded = (TrafficStats.getMobileTxBytes()- preferences.getLong("dataUploaded",0));
         uploaded = datauploaded / k2;
 
         downloaded = Math.round((downloaded*100)/100);
@@ -635,6 +635,17 @@ public class MainActivity extends AppCompatActivity {
         assert unit2 != null;
         unit2.setText(unitArray[j]);
 
+    }
+
+
+
+    gMobileData getMobileLimiterData(){
+        gMobileData data = new gMobileData();
+        SharedPreferences preferences =PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        data.startMobileData = preferences.getLong("dataDownloaded",0);
+        data.limit = preferences.getString("limit","0");
+        data.endDate = preferences.getString("eDate","not used");
+        return data;
     }
 
 

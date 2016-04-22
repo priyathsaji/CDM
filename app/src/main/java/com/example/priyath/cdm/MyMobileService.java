@@ -23,7 +23,9 @@ import java.lang.reflect.Method;
 public class MyMobileService extends Service {
     public String unitArray[];
     public Handler mHandler;
-    public static long mobileD,mobileS;
+    public long mobileD,mobileS;
+    boolean mobileDataEnabled;
+    int flag =0;
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
@@ -51,13 +53,30 @@ public class MyMobileService extends Service {
         @Override
         public void run() {
             try {
+                mobileDataEnabled = false;
                 checking();
+                if(mobileDataEnabled) {
+                    if(flag == 1)
+                        mobileD = TrafficStats.getMobileRxBytes();
+                    Log.i("something is wrong here",String.valueOf(TrafficStats.getMobileRxBytes()));
+                    displayNotification();
+                }else {
+                    //changingMD();
+                    flag=0;
+                    String ns = Context.NOTIFICATION_SERVICE;
+                    NotificationManager nMgr = (NotificationManager)getSystemService(ns);
+                    nMgr.cancel(1);
+
+
+
+                }
 
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
                 int mInterval = 1000;
                 mHandler.postDelayed(mStatusChecker, mInterval);
+
             }
         }
     };
@@ -70,29 +89,24 @@ public class MyMobileService extends Service {
         mHandler.removeCallbacks(mStatusChecker);
     }*/
 
-    void checking(){
-        boolean mobileDataEnabled = false; // Assume disabled
-        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+    void checking() {
+        // Assume disabled
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         try {
             Class cmClass = Class.forName(cm.getClass().getName());
             Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
             method.setAccessible(true); // Make the method callable
             // get the setting for "mobile data"
-            mobileDataEnabled = (Boolean)method.invoke(cm);
+            mobileDataEnabled = (Boolean) method.invoke(cm);
         } catch (Exception e) {
-            Log.i("cant find mobile data","error");
+            Log.i("cant find mobile data", "error");
         }
-
-        if(mobileDataEnabled) {
-            displayNotification();
-        }else{
-            mobileD = TrafficStats.getMobileRxBytes();
-            String ns = Context.NOTIFICATION_SERVICE;
-            NotificationManager nMgr = (NotificationManager)getSystemService(ns);
-            nMgr.cancel(1);
-        }
-
     }
+
+
+
+
+
 
 
     void displayNotification(){
@@ -105,7 +119,7 @@ public class MyMobileService extends Service {
         int k1 =1,k2=1;
         int a =0,b=0;
         double mobileData;
-        long mobileDataDownloaded = TrafficStats.getMobileRxBytes()-mobileD;
+        long mobileDataDownloaded = (TrafficStats.getMobileRxBytes())-mobileD;
 
         if(mobileDataDownloaded < 1024){
             k1 = 1;
@@ -122,6 +136,7 @@ public class MyMobileService extends Service {
         }
 
         mobileData = mobileDataDownloaded / k1;
+        if(flag != 1 && flag != 0)
         mobileS = mobileDataDownloaded - mobileS;
 
         //mobileData = Math.round((mobileData*100)/100);
@@ -161,7 +176,8 @@ public class MyMobileService extends Service {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
         mobileS = mobileDataDownloaded;
-        // Adds the Intent that starts the Activity to the top of the stack
+        flag++;
+
     }
 
 
