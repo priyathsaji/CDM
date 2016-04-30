@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.TrafficStats;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
@@ -38,14 +39,34 @@ public class MyMobileService extends Service {
         mobileD = TrafficStats.getMobileRxBytes();
         startRepeatingTask();
 
-        Toast.makeText(this, "MobileData notification Enabled", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "MobileData notification Enabled", Toast.LENGTH_SHORT).show();
         return START_STICKY;
     }
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        startService(new Intent(getBaseContext(), MyMobileService.class));
+
+    }
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "MobileData notification Disabled", Toast.LENGTH_LONG).show();
+        settings set = new settings();
+        if(set.serviceEndStatus()){
+            String ns = Context.NOTIFICATION_SERVICE;
+            NotificationManager nMgr = (NotificationManager)getSystemService(ns);
+            nMgr.cancel(1);
+            stopRepeatingTask();
+            Toast.makeText(this, "MobileData notification Disabled", Toast.LENGTH_SHORT).show();
+            stopService(new Intent(getApplicationContext(),MyMobileService.class));
+        }
+        else{
+            startService(new Intent(getApplicationContext(),MyMobileService.class));
+        }
+
+
     }
 
 
@@ -61,7 +82,6 @@ public class MyMobileService extends Service {
                     Log.i("something is wrong here",String.valueOf(TrafficStats.getMobileRxBytes()));
                     displayNotification();
                 }else {
-                    //changingMD();
                     flag=0;
                     String ns = Context.NOTIFICATION_SERVICE;
                     NotificationManager nMgr = (NotificationManager)getSystemService(ns);
@@ -85,9 +105,9 @@ public class MyMobileService extends Service {
         mStatusChecker.run();
     }
 
-    /*void stopRepeatingTask() {
+    void stopRepeatingTask() {
         mHandler.removeCallbacks(mStatusChecker);
-    }*/
+    }
 
     void checking() {
         // Assume disabled
@@ -163,18 +183,16 @@ public class MyMobileService extends Service {
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = new Notification.InboxStyle(new Notification.Builder(this)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setContentTitle("Mobile Data Details")
                 .setSmallIcon(R.drawable.mobiledata)
-                .setContentText("Data Downloaded : " + mobileData + unitArray[a] )
-                .setSubText("Download Speed  : " + String.valueOf(mobileS/k2) + unitArray[b] + "/s")
+                .setContentText("Downloaded : " + mobileData + unitArray[a] + "        Speed  : " + String.valueOf(mobileS/k2) + unitArray[b] + "/s")
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_MAX)
-                .setContentIntent(resultPendingIntent))
-                .build();
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                .setContentIntent(resultPendingIntent);
+
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notification);
+        notificationManager.notify(1, builder.build());
         mobileS = mobileDataDownloaded;
         flag++;
 

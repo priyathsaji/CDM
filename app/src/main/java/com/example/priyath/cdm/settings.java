@@ -11,6 +11,8 @@ import android.widget.Switch;
 public class settings extends AppCompatActivity {
 
     private Switch wifiSwitch,mobileDataSwitch;
+    private static int wififlag = 0;
+    private static int mobiledataflag = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +22,7 @@ public class settings extends AppCompatActivity {
         mobileDataSwitch = (Switch)findViewById(R.id.mobileDataSwitch);
         assert wifiSwitch != null;
         wifiSwitch.setChecked(false);
+        mobileDataSwitch.setChecked(false);
         SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(settings.this);
         String status = preference.getString("wifiSwitch","");
         String status1 = preference.getString("mobileDataSwitch","");
@@ -50,16 +53,20 @@ public class settings extends AppCompatActivity {
                 if(isChecked){
                     status = "On";
                     wifiSwitch.setText(status);
+                    wififlag =0;
                     startService(new Intent(getBaseContext(), MyService.class));
                     editor.putString("wifiSwitch","On");
                     editor.apply();
 
                 }else{
+                    wififlag = 1;
+                    stopService(new Intent(getBaseContext(),MyService.class));
                     status = "Off";
                     wifiSwitch.setText(status);
-                    stopService(new Intent(getBaseContext(),MyService.class));
                     editor.putString("wifiSwitch","Off");
                     editor.apply();
+
+
 
                 }
             }
@@ -73,20 +80,33 @@ public class settings extends AppCompatActivity {
                 String status;
                 if(isChecked){
                     status = "On";
+                    mobiledataflag = 0;
                     mobileDataSwitch.setText(status);
                     startService(new Intent(getBaseContext(), MyMobileService.class));
                     editor.putString("mobileDataSwitch","On");
                     editor.apply();
                 }else{
+                    mobiledataflag =1;
+                    stopService(new Intent(getBaseContext(),MyMobileService.class));
                     status = "Off";
                     mobileDataSwitch.setText(status);
-                    stopService(new Intent(getBaseContext(),MyMobileService.class));
                     editor.putString("mobileDataSwitch","Off");
                     editor.apply();
-
                 }
 
             }
         });
+
+
+
+    }
+
+    public boolean serviceEndStatus(){
+        return mobiledataflag == 1;
+    }
+
+    public boolean serviceEndWifiStatus(){
+        //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(settings.this);
+        return wififlag == 1;
     }
 }

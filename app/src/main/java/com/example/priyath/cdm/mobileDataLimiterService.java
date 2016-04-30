@@ -19,7 +19,8 @@ public class mobileDataLimiterService extends Service {
     private gMobileData data = new gMobileData();
     private Handler handler = new Handler();
     private long limitReached;
-    int checker;
+    private int checkflag = 0;
+    private int checker = 0;
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -51,10 +52,9 @@ public class mobileDataLimiterService extends Service {
                 }else if(checker == 1) {
                     limitOverNotification();
                 }else if(checker == 2){
-                    limitReached = TrafficStats.getMobileRxBytes();
                     limitReachedNotification();
                 }else if(checker == 3){
-                    limitReached = TrafficStats.getMobileRxBytes();
+
                     limitGoingToBeOverNotification();
                 }
             }catch(Exception e){
@@ -67,6 +67,12 @@ public class mobileDataLimiterService extends Service {
 
         }
     };
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        startService(new Intent(getBaseContext(), mobileDataLimiterService.class));
+
+    }
 
 
     private void limitOverNotification(){
@@ -119,22 +125,45 @@ public class mobileDataLimiterService extends Service {
 
     private void limitReachedNotification(){
 
+
     }
 
     private void limitGoingToBeOverNotification(){
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(Details.class);
+
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = new Notification.InboxStyle(new Notification.Builder(this)
+                .setContentTitle("your data is going to be over !!! ")
+                .setSmallIcon(R.drawable.mobiledata)
+                .setOngoing(false)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setContentIntent(resultPendingIntent))
+                .build();
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(3, notification);
 
     }
 
 
 
     int checking(){
-        long dataUsed,limit;
+        long limit;
+
         limit = Long.parseLong(data.limit);
-        dataUsed = TrafficStats.getMobileRxBytes()-data.startMobileData;
+        long dataUsed = TrafficStats.getMobileRxBytes() - data.startMobileData;
 
         if(dataUsed > limit){
+            if(checkflag == 0)
+                limitReached = TrafficStats.getMobileRxBytes();
             return 1;
         }else if(dataUsed == limit){
+            checkflag = 1;
+            limitReached = TrafficStats.getMobileRxBytes();
             return 2;
 
         }else if(dataUsed > (limit*0.9)){

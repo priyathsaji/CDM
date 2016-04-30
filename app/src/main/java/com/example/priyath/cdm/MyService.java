@@ -10,9 +10,10 @@ import android.net.TrafficStats;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.widget.Toast;
-
 
 
 /*
@@ -22,6 +23,8 @@ public class MyService extends Service {
     public String unitArray[];
     public Handler mHandler;
     public long wifiD,wifiS;
+    boolean wifiEnabled;
+    int flag =0;
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
@@ -31,17 +34,39 @@ public class MyService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         mHandler = new Handler();
-        wifiD = TrafficStats.getTotalRxBytes()- TrafficStats.getMobileRxBytes();
+        wifiD = TrafficStats.getTotalRxBytes()-TrafficStats.getMobileRxBytes();
         startRepeatingTask();
 
-        Toast.makeText(this, "Wifi Notification Enabled", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "wifi notification Enabled", Toast.LENGTH_SHORT).show();
         return START_STICKY;
     }
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        startService(new Intent(getBaseContext(), MyMobileService.class));
+
+    }
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "Wifi Notification Disabled", Toast.LENGTH_LONG).show();
+
+        settings set = new settings();
+        if(set.serviceEndWifiStatus()){
+            String ns = Context.NOTIFICATION_SERVICE;
+            NotificationManager nMgr = (NotificationManager)getSystemService(ns);
+            nMgr.cancel(0);
+            stopRepeatingTask();
+            Toast.makeText(this, "wifi notification Disabled", Toast.LENGTH_SHORT).show();
+            stopService(new Intent(getApplicationContext(),MyService.class));
+        }
+        else{
+            startService(new Intent(getApplicationContext(),MyService.class));
+        }
+
+
+
     }
 
 
@@ -49,16 +74,29 @@ public class MyService extends Service {
         @Override
         public void run() {
             try {
+                wifiEnabled = false;
+                checking();
+                if(wifiEnabled) {
+                    if(flag == 1)
+                        wifiD = TrafficStats.getTotalRxBytes()-TrafficStats.getMobileRxBytes();
+                    Log.i("something is wrong here",String.valueOf(TrafficStats.getMobileRxBytes()));
+                    displayNotification();
+                }else {
+                    flag=0;
+                    String ns = Context.NOTIFICATION_SERVICE;
+                    NotificationManager nMgr = (NotificationManager)getSystemService(ns);
+                    nMgr.cancel(0);
 
 
-              checking();
 
+                }
 
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
                 int mInterval = 1000;
                 mHandler.postDelayed(mStatusChecker, mInterval);
+
             }
         }
     };
@@ -67,55 +105,54 @@ public class MyService extends Service {
         mStatusChecker.run();
     }
 
-    /*void stopRepeatingTask() {
+    void stopRepeatingTask() {
         mHandler.removeCallbacks(mStatusChecker);
-    }*/
+    }
 
-    void checking(){
-        WifiManager wifi = (WifiManager)getSystemService(WIFI_SERVICE);
+    void checking() {
+        WifiManager manager = (WifiManager)getSystemService(WIFI_SERVICE);
+        wifiEnabled = manager.isWifiEnabled();
 
-        if(wifi.isWifiEnabled()) {
-            displayNotification();
-        }else{
-            wifiD = TrafficStats.getTotalRxBytes()- TrafficStats.getMobileRxBytes();
-            String ns = Context.NOTIFICATION_SERVICE;
-            NotificationManager nMgr = (NotificationManager)getSystemService(ns);
-            nMgr.cancel(0);
-        }
 
     }
+
+
+
+
+
 
 
     void displayNotification(){
 
 
-            unitArray = new String[]{
-                    "B", "KB", "MB", "GB"
-            };
+        unitArray = new String[]{
+                "B", "KB", "MB", "GB"
+        };
 
-            int k1 =1,k2=1;
-            int a =0,b=0;
-            double wifiData;
-            long wifiDataDownloaded = (TrafficStats.getTotalRxBytes()-TrafficStats.getMobileRxBytes())-wifiD;
+        int k1 =1,k2=1;
+        int a =0,b=0;
+        double wifi;
+        long wifiDownloaded = (TrafficStats.getTotalRxBytes()-TrafficStats.getMobileRxBytes())-wifiD;
 
-            if(wifiDataDownloaded < 1024){
-                k1 = 1;
-                a=0;
-            } else if (wifiDataDownloaded > 1073741824){
-                k1 = 1073741824;
-                a=3;
-            } else if (wifiDataDownloaded > (1048576)) {
-                k1 =  1048576;
-                a=2;
-            } else if (wifiDataDownloaded > 1024) {
-                k1 = 1024;
-                a=1;
-            }
+        if(wifiDownloaded < 1024){
+            k1 = 1;
+            a=0;
+        } else if (wifiDownloaded > 1073741824){
+            k1 = 1073741824;
+            a=3;
+        } else if (wifiDownloaded > (1048576)) {
+            k1 =  1048576;
+            a=2;
+        } else if (wifiDownloaded > 1024) {
+            k1 = 1024;
+            a=1;
+        }
 
-            wifiData = wifiDataDownloaded / k1;
-            wifiS = wifiDataDownloaded - wifiS;
+        wifi = wifiDownloaded / k1;
+        if(flag != 1 && flag != 0)
+            wifiS = wifiDownloaded - wifiS;
 
-            //wifiData = Math.round((wifiData*100)/100);
+        //wifi = Math.round((wifi*100)/100);
 
         if(wifiS < 1024){
             k2 = 1;
@@ -132,26 +169,25 @@ public class MyService extends Service {
         }
 
 
-            Intent resultIntent = new Intent(this, MainActivity.class);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addParentStack(Details.class);
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(Details.class);
 
-            stackBuilder.addNextIntent(resultIntent);
-            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            Notification notification = new Notification.InboxStyle(new Notification.Builder(this)
-                    .setContentTitle("Wifi Details")
-                    .setSmallIcon(R.drawable.wifidata)
-                    .setOngoing(true)
-                    .setContentText("Data Downloaded : " + wifiData + unitArray[a] )
-                    .setSubText("Download Speed  : " + String.valueOf(wifiS/k2) + unitArray[b] + "/s")
-                    .setPriority(Notification.PRIORITY_MAX)
-                    .setContentIntent(resultPendingIntent))
-                    .build();
-            notification.flags |= Notification.FLAG_AUTO_CANCEL;
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.notify(0, notification);
-            wifiS = wifiDataDownloaded;
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setContentTitle("wifi Data Details")
+                .setSmallIcon(R.drawable.wifidata)
+                .setContentText("Downloaded : " + wifi + unitArray[a] + "        Speed  : " + String.valueOf(wifiS/k2) + unitArray[b] + "/s")
+                .setOngoing(true)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setContentIntent(resultPendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(0, builder.build());
+        wifiS = wifiDownloaded;
+        flag++;
 
     }
 
