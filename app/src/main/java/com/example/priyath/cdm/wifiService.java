@@ -19,7 +19,8 @@ import android.support.v4.app.TaskStackBuilder;
 public class wifiService extends Service {
 
     public Handler handler = new Handler();
-    long wPrevious,wNow,wSpeed,wpData,wnData;
+    long wPrevious,wNow,wSpeed,wpData;
+    static long wnData;
     public static boolean refreshed;
     @Nullable
     @Override
@@ -140,8 +141,10 @@ public class wifiService extends Service {
 
         NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         manager.notify(1,builder.build());
+    }
 
-
+    public long getWifiDataDownloaded(){
+        return wnData;
     }
 
     public void onDestroy(){

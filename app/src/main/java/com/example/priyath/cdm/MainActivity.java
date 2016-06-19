@@ -16,6 +16,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -85,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
         unitTview = (TextView)findViewById(R.id.unit);
 
 
-        onDisplayWifiData();
-        onDisplayMobileData();
+        initialisation();
         updateLimiter();
         mHandler = new Handler();
         startRepeatingTask();
@@ -121,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                updateMobileData();
-                onDisplayMobileData();
+                mobileDataService mService = new mobileDataService();
+                mService.refresh();
+                onDisplayMobileData(0);
 
 
             }
@@ -135,8 +135,9 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateWifiData();
-                onDisplayWifiData();
+                wifiService wService = new wifiService();
+                wService.refresh();
+                onDisplayWifiData(0);
             }
         });
 
@@ -192,18 +193,25 @@ public class MainActivity extends AppCompatActivity {
 
                 if((!mobileDataEnabled) && (!wifi.isWifiEnabled())) {
                     stopRepeatingTask();
+                    initialisation();
                     mHandler.removeCallbacks(mStatusChecker);
                 }
 
                 if(mobileDataEnabled) {
-                    onDisplayMobileData();
+                    mobileDataService mService = new mobileDataService();
+                    long mData = mService.getmobileDataDownloaded();
+                    onDisplayMobileData(mData);
+                    Log.i("mobile data is  :" ,String.valueOf(mData));
                     if(isLimiterSet){
                         updateLimiter();
                     }
                 }
 
                 if (wifi.isWifiEnabled()){
-                    onDisplayWifiData();
+                    wifiService wService = new wifiService();
+                    long wData = wService.getWifiDataDownloaded();
+                    onDisplayWifiData(wData);
+                    Log.i("wifi Data is  :",String.valueOf(wData));
                 }
 
 
@@ -224,6 +232,15 @@ public class MainActivity extends AppCompatActivity {
 
     void stopRepeatingTask() {
         mHandler.removeCallbacks(mStatusChecker);
+    }
+
+    void initialisation(){
+        long mData,wData;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mData = preferences.getLong("mobileData",0);
+        wData = preferences.getLong("wifiData",0);
+        onDisplayMobileData(mData);
+        onDisplayWifiData(wData);
     }
 
 
@@ -494,13 +511,6 @@ public class MainActivity extends AppCompatActivity {
         unitTview .setText(unit);
         days.setText(nodays);
         limit.setText(limitData);
-
-
-
-
-
-
-
     }
 
 
@@ -541,18 +551,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    void onDisplayMobileData() {
-
-        long mobileDataRecieved = TrafficStats.getMobileRxBytes();
-
+    void onDisplayMobileData(long mData) {
         double mobileData;
         int k = 0 ;
-
-
+        mobileData = mData;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String mD = preferences.getString("MobileDataRecieved", "0");
-        mobileData = mobileDataRecieved - Long.parseLong(mD);
-
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong("mobileData",mData);
+        editor.apply();
 
         if(mobileData < 1024){
             k=0;
@@ -568,13 +574,7 @@ public class MainActivity extends AppCompatActivity {
             k=1;
         }
 
-
-
-
-
-
-      mobileData= (mobileData/a1);//*0.0009765625);
-
+        mobileData= (mobileData/a1);//*0.0009765625);
 
         mobileData=Math.round(mobileData * 100.0)/100.0;
         TextView mobileDataView = (TextView)findViewById(R.id.textView2);
@@ -586,27 +586,17 @@ public class MainActivity extends AppCompatActivity {
 
         assert unit1 != null;
         unit1.setText(unitArray[k]);
-
-
-
-
-
     }
 
-    void onDisplayWifiData(){
 
-        long totalDataRecieved = TrafficStats.getTotalRxBytes();
-        long mobileDataRecieved = TrafficStats.getMobileRxBytes();
-        long wifiDataRecieved = totalDataRecieved - mobileDataRecieved;
-
+    void onDisplayWifiData(long wData){
         double wifiData;
         int  j = 0;
-
-
+        wifiData = wData;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String wD = preferences.getString("WifiDataRecieved", "0");
-        wifiData = wifiDataRecieved - Long.parseLong(wD);
-
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong("wifiData",wData);
+        editor.apply();
 
         if(wifiData  < 1024 ) {
             j = 0;

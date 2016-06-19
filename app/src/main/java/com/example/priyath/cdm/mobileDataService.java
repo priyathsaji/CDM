@@ -18,7 +18,8 @@ import android.support.v4.app.TaskStackBuilder;
  */
 public class mobileDataService extends Service {
     public Handler handler = new Handler();
-    long mdPrevious,mdNow,mdSpeed,mdpData,mdnData;
+    long mdPrevious,mdNow,mdSpeed,mdpData;
+    static long mdnData;
     public static boolean refreshed;
     @Nullable
     @Override
@@ -148,6 +149,9 @@ public class mobileDataService extends Service {
         NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         manager.cancel(1);
 
+    }
+    public long getmobileDataDownloaded(){
+        return mdnData;
     }
 
 

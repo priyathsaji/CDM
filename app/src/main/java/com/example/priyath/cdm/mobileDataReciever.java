@@ -17,12 +17,11 @@ public class mobileDataReciever extends BroadcastReceiver {
         NetworkInfo info = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         if((info!=null)&&(info.isConnected())){
 
-            Toast.makeText(context,"Mobile Data Enabled", Toast.LENGTH_LONG ).show();
+
             Intent intent1 = new Intent(context,mobileDataService.class);
             context.startService(intent1);
 
         }else{
-            Toast.makeText(context,"Mobile Data Disabled",Toast.LENGTH_LONG).show();
             Intent intent1 = new Intent(context,mobileDataService.class);
             context.stopService(intent1);
         }
