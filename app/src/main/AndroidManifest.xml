@@ -30,10 +30,19 @@
             android:label="@string/title_activity_details"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <service android:name=".MyService" />
-        <service android:name=".MyMobileService" />
+        <service android:name=".mobileDataService" />
+        <service android:name=".wifiService"/>
+               <receiver android:name="wifiReciever">
+            <intent-filter>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="mobileDataReciever">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
 
-        <activity android:name=".settings"/>
     </application>
 
 </manifest>
