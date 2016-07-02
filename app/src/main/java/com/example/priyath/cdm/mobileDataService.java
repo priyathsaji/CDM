@@ -18,8 +18,8 @@ import android.support.v4.app.TaskStackBuilder;
  */
 public class mobileDataService extends Service {
     public Handler handler = new Handler();
-    long mdPrevious,mdNow,mdSpeed,mdpData;
-    static long mdnData;
+    long mdPrevious,mdNow,mdSpeed,mdpData,mpUploaded;
+    static long mdnData,mnUploaded;
     public static boolean refreshed;
     @Nullable
     @Override
@@ -28,7 +28,6 @@ public class mobileDataService extends Service {
     }
 
     public int onStartCommand(Intent intent,int flags,int startId){
-
         updatemdpData();
         mdPrevious = TrafficStats.getMobileRxBytes();
         mdNow = mdPrevious;
@@ -45,6 +44,7 @@ public class mobileDataService extends Service {
             if(refreshed)
                 updatemdpData();
             mdnData = TrafficStats.getMobileRxBytes()-mdpData;
+            mnUploaded = TrafficStats.getMobileTxBytes() - mpUploaded;
             updatemdnData();
             mdSpeed = mdNow - mdPrevious;
             mdPrevious = mdNow;
@@ -61,12 +61,15 @@ public class mobileDataService extends Service {
         SharedPreferences.Editor editor = preferences.edit();
         if(refreshed){
             mdpData = TrafficStats.getMobileRxBytes();
+            mpUploaded = TrafficStats.getMobileTxBytes();
+            editor.putLong("mpUploaded",mpUploaded);
             editor.putLong("mdpData",mdpData);
             editor.apply();
             refreshed = false;
         }else{
 
             mdpData = preferences.getLong("mdpData",0);
+            mpUploaded = preferences.getLong("mpUploaded",0);
         }
     }
     public void updatemdnData(){
@@ -124,7 +127,9 @@ public class mobileDataService extends Service {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setContentTitle("Mobile Data ")
-                .setSmallIcon(R.drawable.mobiledata)
+                .setOngoing(true)
+                .setPriority(5)
+                .setSmallIcon(R.drawable.ic_network_cell_white_24dp)
                 .setContentText("Download Speed: " + mdSpeed/k +" " + unitArray[b] +"/s"+"  "+"Downloaded: " + mdnData/k1 +" "+unitArray[b1]);
 
         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
@@ -153,7 +158,7 @@ public class mobileDataService extends Service {
     public long getmobileDataDownloaded(){
         return mdnData;
     }
-
+    public long getmobileDataUPloaded(){ return mnUploaded; }
 
     public void refresh(){
 

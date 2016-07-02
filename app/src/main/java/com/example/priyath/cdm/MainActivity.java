@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView unitTview,sDate,eDate,dDownloaded,dUploaded;
     private CardView cardView;
     private boolean isLimiterSet;
-
-
     int pos;
 
     @Override
@@ -123,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mobileDataService mService = new mobileDataService();
                 mService.refresh();
-                onDisplayMobileData(0);
+                onDisplayMobileData(0,0);
 
 
             }
@@ -137,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 wifiService wService = new wifiService();
                 wService.refresh();
-                onDisplayWifiData(0);
+                onDisplayWifiData(0,0);
             }
         });
 
@@ -200,7 +198,8 @@ public class MainActivity extends AppCompatActivity {
                 if(mobileDataEnabled) {
                     mobileDataService mService = new mobileDataService();
                     long mData = mService.getmobileDataDownloaded();
-                    onDisplayMobileData(mData);
+                    long mUPloaded = mService.getmobileDataUPloaded();
+                    onDisplayMobileData(mData,mUPloaded);
                     Log.i("mobile data is  :" ,String.valueOf(mData));
                     if(isLimiterSet){
                         updateLimiter();
@@ -209,8 +208,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if (wifi.isWifiEnabled()){
                     wifiService wService = new wifiService();
+                    long wUploaded = wService.getWifiDataUploaded();
                     long wData = wService.getWifiDataDownloaded();
-                    onDisplayWifiData(wData);
+                    onDisplayWifiData(wData,wUploaded);
                     Log.i("wifi Data is  :",String.valueOf(wData));
                 }
 
@@ -235,12 +235,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void initialisation(){
-        long mData,wData;
+        long mData,wData,wUploaded,mUploaded;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         mData = preferences.getLong("mobileData",0);
         wData = preferences.getLong("wifiData",0);
-        onDisplayMobileData(mData);
-        onDisplayWifiData(wData);
+        wUploaded = preferences.getLong("wifiUploaded",0);
+        mUploaded = preferences.getLong("mobileUploded",0);
+        onDisplayMobileData(mData,mUploaded);
+        onDisplayWifiData(wData,wUploaded);
     }
 
 
@@ -526,43 +528,22 @@ public class MainActivity extends AppCompatActivity {
         updateLimiter();
     }
 
-    public void updateMobileData(){
-        long totalDataRecieved = TrafficStats.getTotalRxBytes();
-        long mobileDataRecieved = TrafficStats.getMobileRxBytes();
-        SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("MobileDataRecieved",String.valueOf(mobileDataRecieved));
-        editor.putString("TotalDataRecieved",String.valueOf(totalDataRecieved));
-        editor.apply();
 
-    }
-
-
-    public void updateWifiData(){
-
-        long totalDataRecieved = TrafficStats.getTotalRxBytes();
-        long mobileDataRecieved = TrafficStats.getMobileRxBytes();
-        long wifiDataRecieved = totalDataRecieved - mobileDataRecieved;
-        SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("WifiDataRecieved",String.valueOf(wifiDataRecieved));
-        editor.putString("TotalDataRecieved",String.valueOf(totalDataRecieved));
-        editor.apply();
-
-    }
-
-    void onDisplayMobileData(long mData) {
+    void onDisplayMobileData(long mData ,long mdUploaded) {
         double mobileData;
-        int k = 0 ;
+        double mUploaded;
+        int k = 0,k1=0,a = 1 ;
         mobileData = mData;
+        mUploaded = mdUploaded;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putLong("mobileData",mData);
+        editor.putLong("mobileUploded",mdUploaded);
         editor.apply();
 
         if(mobileData < 1024){
             k=0;
-            a1 = 1;
+
         } else if (mobileData > 1073741824){
             a1 = 1073741824;
             k=3;
@@ -574,28 +555,55 @@ public class MainActivity extends AppCompatActivity {
             k=1;
         }
 
+
+        if(mUploaded < 1024){
+            k1=0;
+            a=1;
+
+        } else if (mUploaded > 1073741824){
+            a = 1073741824;
+            k1=3;
+        } else if (mUploaded > (1048576)) {
+            a =  1048576;
+            k1=2;
+        } else if (mUploaded > 1024) {
+            a = 1024;
+            k1=1;
+        }
+
         mobileData= (mobileData/a1);//*0.0009765625);
-
+        mUploaded = (mUploaded/a);
         mobileData=Math.round(mobileData * 100.0)/100.0;
+        mUploaded =Math.round(mUploaded * 100.0)/100.0;
+
         TextView mobileDataView = (TextView)findViewById(R.id.textView2);
-
         TextView unit1 = (TextView)findViewById(R.id.unit1);
+        TextView mobileUploaded = (TextView)findViewById(R.id.MUploadedData);
+        TextView unit3 = (TextView)findViewById(R.id.unit3);
 
+
+        assert mobileUploaded != null;
+        mobileUploaded.setText(String.valueOf(mUploaded));
         assert mobileDataView != null;
         mobileDataView.setText(String.valueOf(mobileData));
 
         assert unit1 != null;
         unit1.setText(unitArray[k]);
+
+        assert unit3 != null;
+        unit3.setText(unitArray[k1]);
     }
 
 
-    void onDisplayWifiData(long wData){
-        double wifiData;
-        int  j = 0;
+    void onDisplayWifiData(long wData,long wUploaded){
+        double wifiData,wifiUploaded;
+        int  j = 0,k=0,a3 =1;
         wifiData = wData;
+        wifiUploaded = wUploaded;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putLong("wifiData",wData);
+        editor.putLong("wifiUploaded",wUploaded);
         editor.apply();
 
         if(wifiData  < 1024 ) {
@@ -612,16 +620,45 @@ public class MainActivity extends AppCompatActivity {
             j = 1;
         }
 
+        if(wifiUploaded  < 1024 ) {
+            k = 0;
+            a3 = 1;
+        }else if(wifiUploaded > (1073741824)) {
+            a3 = 1073741824;
+            k=3;
+        }else if(wifiUploaded > (1048576) ) {
+            a3 = 1048576;
+            k=2;
+        }else if(wifiUploaded > 1024) {
+            a3 = 1024;
+            k = 1;
+        }
+
 
         wifiData=  (wifiData/a2);
-
+        wifiUploaded = (wifiUploaded/a3);
         wifiData = Math.round(wifiData * 100.0) / 100.0;
+        wifiUploaded = Math.round(wifiUploaded * 100.0) / 100.0;
+
         TextView wifiDataView = (TextView)findViewById(R.id.textView4);
         TextView unit2 = (TextView)findViewById(R.id.unit2);
+        TextView wifiUploadeView = (TextView)findViewById(R.id.WUploadedData);
+        TextView unit4 = (TextView)findViewById(R.id.unit4);
         assert wifiDataView != null;
         wifiDataView.setText(String.valueOf(wifiData));
         assert unit2 != null;
         unit2.setText(unitArray[j]);
+        assert wifiUploadeView != null;
+        wifiUploadeView.setText(String.valueOf(wifiUploaded));
+        try
+        {
+            unit4.setText(unitArray[k]);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
 
     }
 

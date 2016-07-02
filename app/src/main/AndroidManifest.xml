@@ -32,11 +32,7 @@
 
         <service android:name=".mobileDataService" />
         <service android:name=".wifiService"/>
-               <receiver android:name="wifiReciever">
-            <intent-filter>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
-            </intent-filter>
-        </receiver>
+
         <receiver android:name="mobileDataReciever">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>

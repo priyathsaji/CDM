@@ -18,12 +18,12 @@
     <string name="to">to</string>
     <string name="limit">Limit</string>
     <string name="mb">MB</string>
-    <string name="downloaded">Downloaded :</string>
-    <string name="uploaded">Uploaded :</string>
+    <string name="downloaded">Downloaded:</string>
+    <string name="uploaded">Uploaded:</string>
     <string name="notifications">Notifications</string>
     <string name="wifi">wifi</string>
     <string name="off">Off</string>
-    <string name="uploaded_">Uploaded :</string>
+    <string name="uploaded_">Uploaded:</string>
     <string name="wifiImage">wifiDataImage</string>
     <string name="mobileImage">mobileDataImage</string>
 </resources>

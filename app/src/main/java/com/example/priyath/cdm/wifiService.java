@@ -19,8 +19,8 @@ import android.support.v4.app.TaskStackBuilder;
 public class wifiService extends Service {
 
     public Handler handler = new Handler();
-    long wPrevious,wNow,wSpeed,wpData;
-    static long wnData;
+    long wPrevious,wNow,wSpeed,wpData,wpUploaded;
+    static long wnData,wnUploaded;
     public static boolean refreshed;
     @Nullable
     @Override
@@ -46,6 +46,7 @@ public class wifiService extends Service {
             if(refreshed)
                 updatewpData();
             wnData = (TrafficStats.getTotalRxBytes()-TrafficStats.getMobileRxBytes())-wpData;
+            wnUploaded =(TrafficStats.getTotalTxBytes()-TrafficStats.getMobileTxBytes())-wpUploaded;
             updatewnData();
             wSpeed = wNow - wPrevious;
             wPrevious = wNow;
@@ -62,6 +63,8 @@ public class wifiService extends Service {
         SharedPreferences.Editor editor = preferences.edit();
         if(refreshed){
             wpData = TrafficStats.getTotalRxBytes()-TrafficStats.getMobileRxBytes();
+            wpUploaded = TrafficStats.getTotalTxBytes()-TrafficStats.getMobileTxBytes();
+            editor.putLong("wpUploaded",wpUploaded);
             editor.putLong("wpData",wpData);
             editor.apply();
             refreshed = false;
@@ -125,7 +128,9 @@ public class wifiService extends Service {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setContentTitle("Wifi Notification")
-                .setSmallIcon(R.drawable.mobiledata)
+                .setOngoing(true)
+                .setPriority(5)
+                .setSmallIcon(R.drawable.ic_network_wifi_white_24dp)
                 .setContentText("Download Speed: " + wSpeed/k +" " + unitArray[b] +"/s"+"  "+"Downloaded: " + wnData/k1 +" "+unitArray[b1]);
 
         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
@@ -145,6 +150,9 @@ public class wifiService extends Service {
 
     public long getWifiDataDownloaded(){
         return wnData;
+    }
+    public long getWifiDataUploaded(){
+        return wnUploaded;
     }
 
     public void onDestroy(){
