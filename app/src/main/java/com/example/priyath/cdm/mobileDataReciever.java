@@ -18,10 +18,16 @@ public class mobileDataReciever extends BroadcastReceiver {
 
         if(manager1.isWifiEnabled()){
             Intent intent1 = new Intent(context,wifiService.class);
+            Intent intent2 = new Intent(context,mobileDataService.class);
+            context.stopService(intent1);
+            context.stopService(intent2);
             context.startService(intent1);
         }
         else if((info!=null)&&(info.isConnected())){
             Intent intent1 = new Intent(context,mobileDataService.class);
+            Intent intent2 = new Intent(context,wifiService.class);
+            context.stopService(intent1);
+            context.stopService(intent2);
             context.startService(intent1);
 
         }else{
