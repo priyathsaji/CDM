@@ -16,6 +16,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -29,6 +30,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -42,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private String[] unitArray;
     private Handler mHandler;
     private  boolean mobileDataEnabled = false;
-    Button button,button1,button2,button3;
+    Button button,button1,button2,button3,button4;
     private int a1 = 1, a2 = 1;
     private EditText days,limit;
     private Spinner unitSpinner;
@@ -71,16 +79,33 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
 
+        limiterdata ldata = null;
+        try {
+            FileInputStream in = openFileInput("limiterdata");
+            ObjectInputStream ois = new ObjectInputStream(in);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        isLimiterSet = preferences.getBoolean("isLimiterSet",false);
+            ldata = (limiterdata)ois.readObject();
+
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
 
 
+
+
+        if(ldata.isLimiterSet){
+            CardView cardView = (CardView)findViewById(R.id.cardView);
+            CardView cardView2 = (CardView)findViewById(R.id.cardView3);
+            assert cardView != null;
+            cardView.setVisibility(View.VISIBLE);
+            assert cardView2 != null;
+            cardView2.setVisibility(View.INVISIBLE);
+        }
+
+        // unit spinner inside the mobile data notification
         unitSpinner = (Spinner) findViewById(R.id.unitSpinner);
-
         assert unitSpinner != null;
         unitSpinner.setAdapter(adapter);
-
         unitTview = (TextView)findViewById(R.id.unit);
 
 
@@ -101,21 +126,38 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        button4 = (Button)findViewById(R.id.setlimiter);
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CardView cview = (CardView)findViewById(R.id.cardView);
+                assert cview != null;
+                cview.setVisibility(View.VISIBLE);
+                CardView cview2 = (CardView)findViewById(R.id.cardView3);
+                assert cview2 != null;
+                cview2.setVisibility(View.INVISIBLE);
+                isLimiterSet =true;
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("isLimiterSet",true);
+
+            }
+        });
+
+        //to be removed
 
         button = (Button)findViewById(R.id.details);
-
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
                 Intent intent = new Intent(MainActivity.this,Details.class);
                 startActivity(intent);
-
-
             }
         });
 
-        button1= (Button)findViewById(R.id.mobile);
 
+        //button to refresh the notification counter for mobile data
+        button1= (Button)findViewById(R.id.mobile);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,8 +170,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        //button to refresh the notification counter for the wifi
         button2 = (Button) findViewById(R.id.wifi);
-
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,9 +184,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+        //onclick listener for the button change to set the mobile data limiter
         button3 = (Button)findViewById(R.id.change);
-
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,16 +193,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        cardView = (CardView)findViewById(R.id.cardView);
 
+        //on click listener to the mobile data limiter to ask whether the user to edit the limiter or not
+        cardView = (CardView)findViewById(R.id.cardView);
         assert cardView != null;
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 limiterDialog();
-
-
             }
         });
 
@@ -296,8 +335,33 @@ public class MainActivity extends AppCompatActivity {
         editor.putLong("dataDownloaded",downloaded);
         editor.putLong("dataUploaded",uploaded);
         editor.putBoolean("isLimiterSet",true);
-
         editor.apply();
+
+
+        // storing the limiter data to an object of class limiterdata
+
+        limiterdata ldata = new limiterdata();
+
+        ldata.dataDownloaded = downloaded;
+        ldata.dataUploaded = uploaded;
+        ldata.days = Long.parseLong(nodays);
+        ldata.unit = unit;
+        ldata.sdate = formattedDate;
+        ldata.eDate = feDate;
+        ldata.isLimiterSet = true;
+        ldata.limit = Long.parseLong(limitData);
+
+        //storing the data to internal storage
+        try {
+            FileOutputStream out = openFileOutput("limiterdata",Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(out);
+            oos.writeObject(ldata);
+            oos.close();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         View view = getCurrentFocus();
         if (view != null) {
@@ -305,14 +369,8 @@ public class MainActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
 
-
-
         dDownloaded.setText("0.0");
         dUploaded.setText("0.0");
-
-
-
-
 
 
         days.setFocusableInTouchMode(false);
@@ -326,8 +384,6 @@ public class MainActivity extends AppCompatActivity {
         unitTview.setFocusable(true);
         cardView.setFocusable(true);
         cardView.setClickable(true);
-
-
         button3.setVisibility(View.INVISIBLE);
 
     }
@@ -405,24 +461,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean doubleBackToExitPressedOnce = false;
 
-    @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
 
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce=false;
-            }
-        }, 2000);
-    }
 
 
 
@@ -513,21 +552,46 @@ public class MainActivity extends AppCompatActivity {
         unitTview .setText(unit);
         days.setText(nodays);
         limit.setText(limitData);
+
+        long limit = Long.parseLong(limitData);
+
+        if(unit.equals("GB")) {
+            if (((limit * 1073741824) - datadownloaded) <= 0) {
+                CardView cardView = (CardView)findViewById(R.id.cardView);
+                CardView cardView2 = (CardView)findViewById(R.id.cardView3);
+                assert cardView != null;
+                cardView.setVisibility(View.INVISIBLE);
+                assert cardView2 != null;
+                cardView2.setVisibility(View.VISIBLE);
+                isLimiterSet = false;
+            }
+        }else{
+               if (((limit*1073741824)-datadownloaded) <= 0){
+
+                   CardView cardView = (CardView)findViewById(R.id.cardView);
+                   CardView cardView2 = (CardView)findViewById(R.id.cardView3);
+                   assert cardView != null;
+                   cardView.setVisibility(View.INVISIBLE);
+                   assert cardView2 != null;
+                   cardView2.setVisibility(View.VISIBLE);
+               }
+                isLimiterSet = false;
+
+
+        }
+
+
+
     }
-
-
-
-
-
-
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setContentView(R.layout.activity_main);
-        updateLimiter();
+        //updateLimiter();
     }
 
+
+    // The code below is the code for updating the notification counter
 
     void onDisplayMobileData(long mData ,long mdUploaded) {
         double mobileData;
@@ -650,29 +714,30 @@ public class MainActivity extends AppCompatActivity {
         unit2.setText(unitArray[j]);
         assert wifiUploadeView != null;
         wifiUploadeView.setText(String.valueOf(wifiUploaded));
-        try
-        {
-            unit4.setText(unitArray[k]);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-
-
+        assert unit4 != null;
+        unit4.setText(unitArray[k]);
     }
 
+    //funtion for the dual press exit on the back key
 
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
 
-    gMobileData getMobileLimiterData(){
-        gMobileData data = new gMobileData();
-        SharedPreferences preferences =PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        data.startMobileData = preferences.getLong("dataDownloaded",0);
-        data.limit = preferences.getString("limit","0");
-        data.endDate = preferences.getString("eDate","not used");
-        return data;
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
-
 
 }
 

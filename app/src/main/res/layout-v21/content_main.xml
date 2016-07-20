@@ -17,12 +17,46 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardView3"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_alignTop="@+id/cardView"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="4dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_network_wifi_black_24dp"
+                android:id="@+id/image3"
+                android:layout_marginBottom="30dp"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@+id/image3"
+                android:background="#3F51B5"
+                android:text="set mobile data limit"
+                android:textColor="#f9f9fa"
+                android:id="@+id/setlimiter"/>
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
     <android.support.v7.widget.CardView
         android:id="@+id/cardView"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         card_view:cardCornerRadius="4dp"
+        android:visibility="invisible"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true">
 
@@ -103,7 +137,7 @@
                 android:id="@+id/limit"
                 android:textSize = "20sp"
                 android:layout_above="@+id/sDate"
-                android:layout_toEndOf="@+id/DataUploaded" />
+                android:layout_toEndOf="@+id/eDay" />
 
             <EditText
                 android:layout_width="50sp"
@@ -147,7 +181,7 @@
                 android:layout_below="@+id/to"
                 android:layout_marginTop="20sp"
                 android:id = "@+id/Downloaded"
-                android:text = "@string/downloaded"
+                android:text ="Recieved: "
                 android:textSize = "20sp"
                 />
             <TextView
@@ -215,7 +249,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text = "Custom counter"
+        android:text = "Notification Counter"
         android:layout_below="@+id/cardView"
         android:textSize="25sp"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -259,7 +293,7 @@
         <ImageView
             android:layout_width="80sp"
             android:layout_height="80sp"
-            android:src="@drawable/mobiledata"
+            android:src="@drawable/ic_network_cell_black_24dp"
             android:id="@+id/image1"
             android:contentDescription="@string/mobileImage" />
         <TextView
@@ -283,7 +317,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id = "@+id/MDownloaded"
-            android:text= "Downloaded  : "
+            android:text= "Recieved: "
             android:layout_toEndOf="@+id/image1"
             android:layout_below="@id/textView"
             android:textSize = "20sp"/>
@@ -303,7 +337,6 @@
             android:layout_below="@+id/textView"
             android:layout_toEndOf="@id/textView2"
             android:textSize = "20sp"
-            android:layout_marginStart="5sp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp" />
         <TextView
@@ -311,7 +344,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/MDownloaded"
             android:layout_toEndOf="@id/image1"
-            android:text = "Uploaded  : "
+            android:text = "Uploaded: "
             android:id = "@+id/MUploaded"
             android:textSize = "20sp" />
         <TextView
@@ -365,7 +398,7 @@
         <ImageView
             android:layout_width="80sp"
             android:layout_height="80sp"
-            android:src="@drawable/wifidata"
+            android:src="@drawable/ic_network_wifi_black_24dp"
             android:id="@+id/image2"
             android:contentDescription="@string/wifiImage" />
 
@@ -389,7 +422,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/WDownloaded"
-            android:text="Downloaded  : "
+            android:text="Recieved: "
             android:layout_toEndOf="@id/image2"
             android:layout_below="@+id/textView3"
             android:textSize = "20sp"
@@ -416,7 +449,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text = "@string/uploaded_"
+            android:text = "Uploaded: "
             android:id = "@+id/WUploaded"
             android:textSize = "20sp"
             android:layout_below="@id/WDownloaded"
@@ -437,7 +470,8 @@
             android:textSize = "20sp"
             android:layout_below="@id/WDownloaded"
             android:layout_toEndOf="@id/WUploadedData"
-            android:layout_marginStart="5sp"/>
+            android:layout_marginStart="5sp"
+            android:id="@+id/unit4"/>
     </RelativeLayout>
 
     </android.support.v7.widget.CardView>
