@@ -91,8 +91,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
+        if(ldata != null)
         if(ldata.isLimiterSet){
             CardView cardView = (CardView)findViewById(R.id.cardView);
             CardView cardView2 = (CardView)findViewById(R.id.cardView3);
@@ -385,6 +384,11 @@ public class MainActivity extends AppCompatActivity {
         cardView.setFocusable(true);
         cardView.setClickable(true);
         button3.setVisibility(View.INVISIBLE);
+
+        //starting the alarm Servie
+
+        AlarmReciever alarmReciever = new AlarmReciever();
+        alarmReciever.setAlarm(this);
 
     }
 
