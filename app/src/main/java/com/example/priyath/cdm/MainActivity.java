@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
         eDate = (TextView)findViewById(R.id.eDate);
 
         c.add(Calendar.DATE, Integer.parseInt(nodays));
-        SimpleDateFormat sdf = new SimpleDateFormat("dd / MMM /yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd / MMM / yyyy");
         Date resultdate = new Date(c.getTimeInMillis());
         feDate = sdf.format(resultdate);
 

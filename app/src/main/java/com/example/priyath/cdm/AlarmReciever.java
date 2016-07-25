@@ -10,6 +10,10 @@ import java.util.Calendar;
 
 /*
  * Created by PRIYATH SAJI on 23-07-2016.
+ *
+ * This is a reciever which is activates when the serAlarm() function of the this class is
+ * called.once the setAlarm fuction is called the onReciver function of the reciever is called
+ * once a day
  */
 public class AlarmReciever extends WakefulBroadcastReceiver {
     @Override
@@ -28,8 +32,8 @@ public class AlarmReciever extends WakefulBroadcastReceiver {
         alarmIntent = PendingIntent.getBroadcast(context,0,intent,0);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY,18);
-        calendar.set(Calendar.MINUTE,6);
+        calendar.set(Calendar.HOUR_OF_DAY,20);
+        calendar.set(Calendar.MINUTE,47);
 
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY,alarmIntent);
 
