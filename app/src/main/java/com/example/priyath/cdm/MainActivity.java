@@ -37,10 +37,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -145,12 +148,30 @@ public class MainActivity extends AppCompatActivity {
 
         //to be removed
 
+        //testing to be removed immediatey and urgently
+
+        Log.i("the service started","Please wait!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+        //Intent intent = new Intent(this,initialisationService.class);
+        //startService(intent);
+
         button = (Button)findViewById(R.id.details);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
-                Intent intent = new Intent(MainActivity.this,Details.class);
-                startActivity(intent);
+                List<appDetails> appdetails = null;
+                try {
+                    FileInputStream fis = openFileInput("app initialisation details");
+                    ObjectInputStream ois  = new ObjectInputStream(fis);
+                    appdetails = (List<appDetails>)ois.readObject();
+
+                } catch (ClassNotFoundException | IOException e) {
+                    e.printStackTrace();
+                }
+                assert appdetails != null;
+                appDetails app = appdetails.get(0);
+                Log.i("the app name is ",String.valueOf(app.uid));
+
             }
         });
 
